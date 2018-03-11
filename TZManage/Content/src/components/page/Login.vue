@@ -50,18 +50,21 @@
                 //     }
                 // });
                 Axios.post('Login/GetUserInfo', {
-                    UserName: self.username,
-                    UserPwd: self.password
+                    UserName: self.ruleForm.username,
+                    UserPwd: self.ruleForm.password
                 })
                 .then(function (response) {
-                    console.log(response);
-                    // if (response.data) {
-                    //     localStorage.setItem('ms_username',self.ruleForm.username);
-                    //     self.$router.push('/readme');
-                    // } else {
-                    //     console.log('error submit!!');
-                    //     return false;
-                    // }
+                    let data = response.data;
+                    console.log(data);
+                    if (data.code === 1) {
+                        localStorage.setItem('ms_username',self.ruleForm.username);
+                        self.$router.push('/readme');
+                    } else {
+                        this.$alert('您输入的用户名或者密码错误，请重新输入', '温馨提示', {
+                            confirmButtonText: '确定'
+                        });
+                        return false;
+                    }
                 })
                 .catch(function (error) {
                     console.log(error);

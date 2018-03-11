@@ -2,8 +2,8 @@
     <div class="table">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-menu"></i> 省级问题</el-breadcrumb-item>
-                <el-breadcrumb-item>基础表格</el-breadcrumb-item>
+                <el-breadcrumb-item v-for="item, i in breadcrumb"><i class="el-icon-menu" v-if="i === 0"></i> {{item}}</el-breadcrumb-item>
+                <!--<el-breadcrumb-item>基础表格</el-breadcrumb-item>-->
             </el-breadcrumb>
         </div>
         <div class="handle-box">
@@ -136,12 +136,109 @@
                 //     }
                 // })
                 return self.tableData
+            },
+            breadcrumbData(){
+                let list = [];
+                let type = this.$route.params.type;
+                let level = this.$route.params.level;
+                let countyId = this.$route.params.countyId;
+                if (type || type === 'Problem') {
+                    list.push('问题点位');
+                }
+                if (level || level === 'Province') {
+                    list.push('省级点位');
+                } else if (level || level === 'City') {
+                    list.push('市级点位');
+                } else if (level || level === 'City') {
+                    list.push('县级自查自纠点位');
+                }
+
+                switch (countyId) {
+                    case 'jj':
+                        list.push('椒江区');
+                        break;
+                    case 'hy':
+                        list.push('黄岩区');
+                        break;
+                    case 'lq':
+                        list.push('路桥区');
+                        break;
+                    case 'lh':
+                        list.push('临海市');
+                        break;
+                    case 'wl':
+                        list.push('温岭市');
+                        break;
+                    case 'yh':
+                        list.push('玉环市');
+                        break;
+                    case 'xj':
+                        list.push('仙居县');
+                        break;
+                    case 'sm':
+                        list.push('三门县');
+                        break;
+                    case 'tt':
+                        list.push('天台县');
+                        break;
+                }
+                console.log(list)
+                return list;
             }
         },
         methods: {
             handleCurrentChange(val){
                 this.cur_page = val;
                 this.getData();
+            },
+            getBreadcrumb(){
+                let list = []
+                console.log(this.$route.params.level);
+                let type = this.$route.params.type;
+                let level = this.$route.params.level;
+                let countyId = this.$route.params.countyId;
+                if (type || type === 'Problem') {
+                    list.push('问题点位');
+                }
+                if (level || level === 'Province') {
+                    list.push('省级点位');
+                } else if (level || level === 'City') {
+                    list.push('市级点位');
+                } else if (level || level === 'City') {
+                    list.push('县级自查自纠点位');
+                }
+
+                switch (countyId) {
+                    case 'jj':
+                        list.push('椒江区');
+                        break;
+                    case 'hy':
+                        list.push('黄岩区');
+                        break;
+                    case 'lq':
+                        list.push('路桥区');
+                        break;
+                    case 'lh':
+                        list.push('临海市');
+                        break;
+                    case 'wl':
+                        list.push('温岭市');
+                        break;
+                    case 'yh':
+                        list.push('玉环市');
+                        break;
+                    case 'xj':
+                        list.push('仙居县');
+                        break;
+                    case 'sm':
+                        list.push('三门县');
+                        break;
+                    case 'tt':
+                        list.push('天台县');
+                        break;
+                }
+                console.log(list)
+                this.breadcrumb = [].concat(list);
             },
             getData(){
                 let self = this;
@@ -184,6 +281,12 @@
             },
             closePro: function (msg) {
                 this.proAddShow = msg;
+            }
+        },
+        watch: {
+            '$route' (to, from) {
+                console.log(this.$route.params)
+                this.getBreadcrumb();
             }
         }
     }

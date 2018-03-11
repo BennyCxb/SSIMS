@@ -26,19 +26,30 @@
                             <span>{{ item.title }}</span>
                         </template>
                         <!--二级菜单-->
-                        <el-submenu v-for="(subItem,i) in item.subs" :index="subItem.index">
-                            <template slot="title">
-                                <i :class="item.icon"></i>
-                                <span>{{ subItem.title }}</span>
+                        <template v-for="(subItem,i) in item.subs">
+                            <template v-if="subItem.subs">
+                                <el-submenu :index="subItem.index">
+                                    <template slot="title">
+                                        <i :class="item.icon"></i>
+                                        <span>{{ subItem.title }}</span>
+                                    </template>
+                                    <!--三级菜单-->
+                                    <el-menu-item v-for="(subSubItem,i) in subItem.subs"
+                                                  :key="i"
+                                                  :index="subSubItem.index"
+                                                  @click="routerTo(subSubItem.index, item.index, subItem.index, subSubItem.countyId)">
+                                        {{ subSubItem.title }}
+                                    </el-menu-item>
+                                    <!--三级菜单-->
+                                </el-submenu>
                             </template>
-                            <!--三级菜单-->
-                            <el-menu-item v-for="(subSubItem,i) in subItem.subs"
-                                          :key="i"
-                                          :index="subSubItem.index">
-                                {{ subSubItem.title }}
-                            </el-menu-item>
-                            <!--三级菜单-->
-                        </el-submenu>
+                            <template v-else>
+                                <el-menu-item :index="subItem.index">
+                                    <i :class="subItem.icon"></i>{{ subItem.title }}
+                                </el-menu-item>
+                            </template>
+                        </template>
+
                         <!--二级菜单-->
                     </el-submenu>
                 </template>
@@ -65,91 +76,95 @@
                     },
                     {
                         icon: 'el-icon-menu',
-                        index: '1',
+                        index: 'Problem',
                         title: '问题点位',
                         subs: [
                             {
                                 // icon: 'el-icon-menu',
-                                index: 'table',
+                                index: 'Province',
                                 title: '省级问题',
                                 subs: [
                                     {
-                                        index: 'table?P_P_JJ',
+                                        index: 'Province_jj',
+                                        countyId: 'jj',
                                         title: '椒江区'
                                     },
                                     {
-                                        index: 'table?pphy',
+                                        index: 'Province_hy',
+                                        countyId: 'hy',
                                         title: '黄岩区'
                                     },
                                     {
-                                        index: '/Problem/province?lq',
+                                        index: 'Province_lq',
                                         title: '路桥区'
                                     },
                                     {
-                                        index: '/Problem/province?lh',
+                                        index: 'Province_lh',
                                         title: '临海市'
                                     },
                                     {
-                                        index: '/Problem/province?wl',
+                                        index: 'Province_wl',
                                         title: '温岭市'
                                     },
                                     {
-                                        index: '/Problem/province?yh',
+                                        index: 'Province_yh',
                                         title: '玉环市'
                                     },
                                     {
-                                        index: '/Problem/province?xj',
+                                        index: 'Province_xj',
                                         title: '仙居县'
                                     },
                                     {
-                                        index: '/Problem/province?sm',
+                                        index: 'Province_sm',
                                         title: '三门县'
                                     },
                                     {
-                                        index: '/Problem/province?tt',
+                                        index: 'Province_tt',
                                         title: '天台县'
                                     }
                                 ]
                             },
                             {
                                 // icon: 'el-icon-menu',
-                                index: 'PCity',
+                                index: 'City',
                                 title: '市级问题',
                                 subs: [
                                     {
-                                        index: 'PCity',
+                                        index: 'City_jj',
+                                        countyId: 'jj',
                                         title: '椒江区'
                                     },
                                     {
-                                        index: 'hy',
+                                        index: 'City_hy',
+                                        countyId: 'jj',
                                         title: '黄岩区'
                                     },
                                     {
-                                        index: '/Problem/city?lq',
+                                        index: 'City_lq',
                                         title: '路桥区'
                                     },
                                     {
-                                        index: '/Problem/city?lh',
+                                        index: 'City_lh',
                                         title: '临海市'
                                     },
                                     {
-                                        index: '/Problem/city?wl',
+                                        index: 'City_wl',
                                         title: '温岭市'
                                     },
                                     {
-                                        index: '/Problem/city?yh',
+                                        index: 'City_yh',
                                         title: '玉环市'
                                     },
                                     {
-                                        index: '/Problem/city?xj',
+                                        index: 'City_xj',
                                         title: '仙居县'
                                     },
                                     {
-                                        index: '/Problem/city?sm',
+                                        index: 'City_sm',
                                         title: '三门县'
                                     },
                                     {
-                                        index: '/Problem/city?tt',
+                                        index: 'City_tt',
                                         title: '天台县'
                                     }
                                 ]
@@ -157,43 +172,43 @@
 
                             {
                                 // icon: 'el-icon-menu',
-                                index: '/Problem/county',
+                                index: 'County',
                                 title: '县级自查自纠点位',
                                 subs: [
                                     {
-                                        index: '/Problem/county?jj',
+                                        index: 'County_jj',
                                         title: '椒江区'
                                     },
                                     {
-                                        index: '/Problem/county?hy',
+                                        index: 'County_hy',
                                         title: '黄岩区'
                                     },
                                     {
-                                        index: '/Problem/county?lq',
+                                        index: 'County_lq',
                                         title: '路桥区'
                                     },
                                     {
-                                        index: '/Problem/county?lh',
+                                        index: 'County_lh',
                                         title: '临海市'
                                     },
                                     {
-                                        index: '/Problem/county?wl',
+                                        index: 'County_wl',
                                         title: '温岭市'
                                     },
                                     {
-                                        index: '/Problem/county?yh',
+                                        index: 'County_yh',
                                         title: '玉环市'
                                     },
                                     {
-                                        index: '/Problem/county?xj',
+                                        index: 'County_xj',
                                         title: '仙居县'
                                     },
                                     {
-                                        index: '/Problem/county?sm',
+                                        index: 'County_sm',
                                         title: '三门县'
                                     },
                                     {
-                                        index: '/Problem/county?tt',
+                                        index: 'County_tt',
                                         title: '天台县'
                                     }
                                 ]
@@ -206,50 +221,40 @@
                         title: '桥下空间利用',
                         subs: [
                             {
-                                icon: 'el-icon-menu',
-                                index: '1-1',
-                                title: '省级问题',
-                                subs: [
-                                    {
-                                        index: 'problem/all',
-                                        title: '全部'
-                                    },
-                                    {
-                                        index: 'vuetable',
-                                        title: '待审核'
-                                    }
-                                ]
+                                index: 'Bridgejj',
+                                title: '椒江区'
                             },
                             {
-                                icon: 'el-icon-menu',
-                                index: '1-2',
-                                title: '市级问题',
-                                subs: [
-                                    {
-                                        index: 'problem/all',
-                                        title: '全部'
-                                    },
-                                    {
-                                        index: 'vuetable',
-                                        title: '待审核'
-                                    }
-                                ]
+                                index: '/Problem/county?hy',
+                                title: '黄岩区'
                             },
-
                             {
-                                icon: 'el-icon-menu',
-                                index: '1-3',
-                                title: '县级自查自纠点位',
-                                subs: [
-                                    {
-                                        index: 'problem/all',
-                                        title: '全部'
-                                    },
-                                    {
-                                        index: 'vuetable',
-                                        title: '待审核'
-                                    }
-                                ]
+                                index: '/Problem/county?lq',
+                                title: '路桥区'
+                            },
+                            {
+                                index: '/Problem/county?lh',
+                                title: '临海市'
+                            },
+                            {
+                                index: '/Problem/county?wl',
+                                title: '温岭市'
+                            },
+                            {
+                                index: '/Problem/county?yh',
+                                title: '玉环市'
+                            },
+                            {
+                                index: '/Problem/county?xj',
+                                title: '仙居县'
+                            },
+                            {
+                                index: '/Problem/county?sm',
+                                title: '三门县'
+                            },
+                            {
+                                index: '/Problem/county?tt',
+                                title: '天台县'
                             }
                         ]
                     },
