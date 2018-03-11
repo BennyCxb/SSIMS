@@ -15,7 +15,9 @@ namespace FLow.FLows
         /// <returns></returns>
         public Result BeforeSubmit(FlowModel flowModel)
         {
-            return null;
+            Result result = new Result();
+            result.code = 1;
+            return result;
         }
 
         /// <summary>
@@ -27,7 +29,7 @@ namespace FLow.FLows
             Result result = new Result();
             result.code = 1;
 
-            return null;
+            return result;
         }
 
         /// <summary>
@@ -39,7 +41,7 @@ namespace FLow.FLows
             Result result = new Result();
             result.code = 1;
             
-            return null;
+            return result;
         }
 
         /// <summary>
@@ -51,7 +53,7 @@ namespace FLow.FLows
             Result result = new Result();
             result.code = 1;
 
-            return null;
+            return result;
         }
 
         /// <summary>
@@ -63,7 +65,7 @@ namespace FLow.FLows
             Result result = new Result();
             result.code = 1;
 
-            return null;
+            return result;
         }
 
         /// <summary>
@@ -75,7 +77,7 @@ namespace FLow.FLows
             Result result = new Result();
             result.code = 1;
 
-            return null;
+            return result;
         }
     }
 }

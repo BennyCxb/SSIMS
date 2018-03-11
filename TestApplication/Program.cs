@@ -1,5 +1,6 @@
 ﻿using BLL;
 using BT.Manage.Frame.Base;
+using FLow;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -17,13 +18,21 @@ namespace TestApplication
         {
             Result result = new Result();
 
-            result.@object= MenuBll.ReturnJson(1);
+            //result.@object = MenuBll.ReturnJson(1);
+            //CacheHelper.CacheSet<Result>("1234", result, 1);
+            //Result info = CacheHelper.CacheGet<Result>("1234");
 
-            CacheHelper.CacheSet<Result>("1234",result,1);
+            FlowModel flowModel = new FlowModel();
+            flowModel.FBillTypeID = 1000011;
+            flowModel.FCurrentLevel = 20;
+            flowModel.FlowMessage = "通过";
+            flowModel.FFlowResult = 1;
+            flowModel.FID = 1;
+            flowModel.UserID = 1;
+            result=DoFlow.DoAdopt(flowModel);
 
-            Result info = CacheHelper.CacheGet<Result>("1234");
-            
-            
+
+
 
             Console.ReadKey();
         }

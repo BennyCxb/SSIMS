@@ -96,6 +96,24 @@ namespace FLow
             set;
         }
 
+        /// <summary>
+        /// 流程ID
+        /// </summary>
+        public int FFlowFID
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 审核结果
+        /// </summary>
+        public int FFlowResult
+        {
+            get;
+            set;
+        }
+
         
     }
 }
