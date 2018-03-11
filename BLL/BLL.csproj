@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseAgencyBll.cs" />
     <Compile Include="Common\BaseBll.cs" />
     <Compile Include="LoginBll.cs" />
     <Compile Include="MenuBll.cs" />

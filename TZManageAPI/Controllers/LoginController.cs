@@ -25,7 +25,6 @@ namespace TZManageAPI.Controllers
         [HttpPost]
         public Result GetUserInfo([FromBody] LoginDto dto)
         {
-
             var result = new Result();
             try
             {
