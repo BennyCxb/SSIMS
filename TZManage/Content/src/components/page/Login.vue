@@ -19,6 +19,7 @@
 </template>
 
 <script>
+    import Axios from 'axios';
     export default {
         data: function(){
             return {
@@ -39,14 +40,31 @@
         methods: {
             submitForm(formName) {
                 const self = this;
-                self.$refs[formName].validate((valid) => {
-                    if (valid) {
-                        localStorage.setItem('ms_username',self.ruleForm.username);
-                        self.$router.push('/readme');
-                    } else {
-                        console.log('error submit!!');
-                        return false;
-                    }
+                // self.$refs[formName].validate((valid) => {
+                //     if (valid) {
+                //         localStorage.setItem('ms_username',self.ruleForm.username);
+                //         self.$router.push('/readme');
+                //     } else {
+                //         console.log('error submit!!');
+                //         return false;
+                //     }
+                // });
+                Axios.post('Login/GetUserInfo', {
+                    UserName: self.username,
+                    UserPwd: self.password
+                })
+                .then(function (response) {
+                    console.log(response);
+                    // if (response.data) {
+                    //     localStorage.setItem('ms_username',self.ruleForm.username);
+                    //     self.$router.push('/readme');
+                    // } else {
+                    //     console.log('error submit!!');
+                    //     return false;
+                    // }
+                })
+                .catch(function (error) {
+                    console.log(error);
                 });
             }
         }

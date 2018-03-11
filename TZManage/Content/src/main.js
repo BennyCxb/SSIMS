@@ -9,6 +9,10 @@ import "babel-polyfill";
 
 Vue.use(ElementUI);
 Vue.prototype.$axios = axios;
+axios.defaults.baseURL = 'http://localhost:8088/api/';
+// axios.defaults.timeout = 1000;
+//默认的contenttype为json以及utf-8；
+// axios.defaults.headers={'Content-Type': 'text/html;charset=gb2312'}
 new Vue({
     router,
     render: h => h(App)
