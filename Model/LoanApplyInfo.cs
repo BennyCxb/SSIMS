@@ -15,7 +15,7 @@ namespace BT.Manage.Model
     // 文件名：LoanApply.cs
     // 文件功能描述：【四边三化核准单】实体
     // 创建人：LiaoYu
-    // 创建标识： 2018/3/11 20:38:44
+    // 创建标识： 2018/3/12 22:49:08
     //-----------------------------------*/
     [TableName("t_Loan_Apply")]
     public class LoanApplyInfo  : BaseModel
@@ -38,10 +38,10 @@ namespace BT.Manage.Model
             [Display(Name = @"状态")]
             public int? FStatus{ get; set; }
             /// <summary>
-            /// 行政区划ID
+            /// 行政区划Value
             /// </summary>
             [Display(Name = @"行政区划Value")]
-            public int? FAgencyValue { get; set; }
+            public string FAgencyValue{ get; set; }
             /// <summary>
             /// 行政区划名
             /// </summary>
@@ -107,5 +107,36 @@ namespace BT.Manage.Model
             /// </summary>
             [Display(Name = @"下级审核级次")]
             public int? FNextCheckLevel{ get; set; }
+            /// <summary>
+            /// 整改状态 0.未整改 1.已整改
+            /// </summary>
+            [Display(Name = @"整改状态 0.未整改 1.已整改")]
+            public int? FChangeStatus{ get; set; }
+            /// <summary>
+            /// 是否已删除 
+            /// </summary>
+            [Display(Name = @"是否已删除 ")]
+            public int? FIsDeleted{ get; set; }
+            /// <summary>
+            /// 制单人ID
+            /// </summary>
+            [Display(Name = @"制单人ID")]
+            public int? FAddUserID{ get; set; }
+            private System.DateTime _FAddTime = System.DateTime.Now;
+            /// <summary>
+            /// 添加时间
+            /// </summary>
+            [Display(Name = @"添加时间")]
+            public System.DateTime FAddTime { get { return _FAddTime; } set { _FAddTime = value; } }        
+            /// <summary>
+            /// 修改用户ID
+            /// </summary>
+            [Display(Name = @"修改用户ID")]
+            public int? FModifyUserID{ get; set; }
+            /// <summary>
+            /// 修改用户
+            /// </summary>
+            [Display(Name = @"修改用户")]
+            public System.DateTime? FModifyTime{ get; set; }
     }
 }

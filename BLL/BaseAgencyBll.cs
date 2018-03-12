@@ -26,7 +26,7 @@ namespace BLL
         }
 
         /// <summary>
-        /// 根据ID获取行政区划详情
+        /// 根据Value获取行政区划详情
         /// </summary>
         /// <param name="FAgencyID"></param>
         /// <returns></returns>
