@@ -20,7 +20,7 @@ namespace BLL
         /// <returns></returns>
         public static DataTable GetAgencyList()
         {
-            DataTable dt= ModelOpretion.SearchDataRetunDataTable(" select FID,FName from t_Base_Agency ",null);
+            DataTable dt= ModelOpretion.SearchDataRetunDataTable(" select FValue,FName from t_Base_Agency ", null);
 
             return dt;
         }
@@ -30,10 +30,11 @@ namespace BLL
         /// </summary>
         /// <param name="FAgencyID"></param>
         /// <returns></returns>
-        public static BaseAgencyInfo GetAgencyByID(int FAgencyID)
+        public static BaseAgencyInfo GetAgencyByID(string FAgencyValue)
         {
-            BaseAgencyInfo info = ModelOpretion.FirstOrDefault<BaseAgencyInfo>(FAgencyID);
+            BaseAgencyInfo info = ModelOpretion.FirstOrDefault<BaseAgencyInfo>(p=>p.FValue== FAgencyValue);
             return info;
         }
+        
     }
 }

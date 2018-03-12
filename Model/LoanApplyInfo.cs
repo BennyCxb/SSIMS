@@ -40,8 +40,8 @@ namespace BT.Manage.Model
             /// <summary>
             /// 行政区划ID
             /// </summary>
-            [Display(Name = @"行政区划ID")]
-            public int? FAgencyID{ get; set; }
+            [Display(Name = @"行政区划Value")]
+            public int? FAgencyValue { get; set; }
             /// <summary>
             /// 行政区划名
             /// </summary>

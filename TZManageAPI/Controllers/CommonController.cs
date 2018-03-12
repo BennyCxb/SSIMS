@@ -36,6 +36,27 @@ namespace TZManageAPI.Controllers
             return result;
         }
 
+        /// <summary>
+        /// 根据枚举类型名获取枚举列表
+        /// </summary>
+        /// <param name="EnumType"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public Result GetEnumList(string EnumType)
+        {
+            Result result = new Result();
+            result.code = 0;
+
+            DataTable dt = BaseEnumValueBll.GetEnumList(EnumType);
+
+            result.code = 1;
+            result.@object = dt;
+
+            return result;
+
+        }
+             
+
 
 
     }

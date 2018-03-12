@@ -60,7 +60,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseAgencyBll.cs" />
+    <Compile Include="BaseEnumValueBll.cs" />
     <Compile Include="Common\BaseBll.cs" />
+    <Compile Include="LoanApplyBll.cs" />
     <Compile Include="LoginBll.cs" />
     <Compile Include="MenuBll.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
