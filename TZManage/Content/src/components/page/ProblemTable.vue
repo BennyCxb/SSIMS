@@ -2,7 +2,7 @@
     <div class="table">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item v-for="item, i in breadcrumb"><i class="el-icon-menu" v-if="i === 0"></i> {{item}}</el-breadcrumb-item>
+                <el-breadcrumb-item v-for="(item, i) in breadcrumb"><i class="el-icon-menu" v-if="i === 0"></i> {{item}}</el-breadcrumb-item>
                 <!--<el-breadcrumb-item>基础表格</el-breadcrumb-item>-->
             </el-breadcrumb>
         </div>
@@ -27,7 +27,8 @@
             <el-button type="primary" icon="printer" @click="search">数据导出</el-button>
             <el-button type="primary" icon="upload2" @click="proAddShow = true">上报问题</el-button>
 
-            <vProblemForm :formShow="proAddShow" @closeProAdd="closePro"></vProblemForm>
+            <vProblemForm :formShow="proAddShow" :sposition="position" @closeProAdd="closePro" @selectMap="closeMap"></vProblemForm>
+            <map-select :mapShow="mapSelectShow" @selectMap="closeMap" @selectPosition="setPosition"></map-select>
 
             <el-button type="primary" icon="" @click="search">整改完成</el-button>
         </div>
@@ -66,15 +67,18 @@
 </template>
 
 <script>
-    import vProblemForm from './ProblemForm.vue'
+    import vProblemForm from './ProblemForm.vue';
+    import mapSelect from './MapSelect.vue';
 
     export default {
         components:{
-            vProblemForm
+            vProblemForm,
+            mapSelect
         },
         data() {
             return {
                 url: './static/vuetable.json',
+                position: '',
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -109,7 +113,9 @@
                     }
                 ],
 
-                proAddShow: false
+                proAddShow: false,
+                mapSelectShow: false,
+                breadcrumb: []
             }
         },
         created(){
@@ -136,54 +142,6 @@
                 //     }
                 // })
                 return self.tableData
-            },
-            breadcrumbData(){
-                let list = [];
-                let type = this.$route.params.type;
-                let level = this.$route.params.level;
-                let countyId = this.$route.params.countyId;
-                if (type || type === 'Problem') {
-                    list.push('问题点位');
-                }
-                if (level || level === 'Province') {
-                    list.push('省级点位');
-                } else if (level || level === 'City') {
-                    list.push('市级点位');
-                } else if (level || level === 'City') {
-                    list.push('县级自查自纠点位');
-                }
-
-                switch (countyId) {
-                    case 'jj':
-                        list.push('椒江区');
-                        break;
-                    case 'hy':
-                        list.push('黄岩区');
-                        break;
-                    case 'lq':
-                        list.push('路桥区');
-                        break;
-                    case 'lh':
-                        list.push('临海市');
-                        break;
-                    case 'wl':
-                        list.push('温岭市');
-                        break;
-                    case 'yh':
-                        list.push('玉环市');
-                        break;
-                    case 'xj':
-                        list.push('仙居县');
-                        break;
-                    case 'sm':
-                        list.push('三门县');
-                        break;
-                    case 'tt':
-                        list.push('天台县');
-                        break;
-                }
-                console.log(list)
-                return list;
             }
         },
         methods: {
@@ -193,22 +151,22 @@
             },
             getBreadcrumb(){
                 let list = []
-                console.log(this.$route.params.level);
-                let type = this.$route.params.type;
-                let level = this.$route.params.level;
-                let countyId = this.$route.params.countyId;
-                if (type || type === 'Problem') {
+                // console.log(this.$route.query);
+                let first = this.$route.query.first;
+                let second = this.$route.query.second;
+                let third = this.$route.query.third;
+                if (first || first === 'Problem') {
                     list.push('问题点位');
                 }
-                if (level || level === 'Province') {
+                if (second || second === 'Province') {
                     list.push('省级点位');
-                } else if (level || level === 'City') {
+                } else if (second || second === 'City') {
                     list.push('市级点位');
-                } else if (level || level === 'City') {
+                } else if (second || second === 'City') {
                     list.push('县级自查自纠点位');
                 }
 
-                switch (countyId) {
+                switch (third) {
                     case 'jj':
                         list.push('椒江区');
                         break;
@@ -237,7 +195,7 @@
                         list.push('天台县');
                         break;
                 }
-                console.log(list)
+                // console.log(list)
                 this.breadcrumb = [].concat(list);
             },
             getData(){
@@ -245,7 +203,12 @@
                 if(process.env.NODE_ENV === 'development'){
                     self.url = '/ms/table/list';
                 };
-                self.$axios.post(self.url, {page:self.cur_page}).then((res) => {
+                var instance = self.$axios.create({
+                    baseURL: 'http://localhost:8080/',
+                    timeout: 1000,
+                    headers: {'X-Custom-Header': 'foobar'}
+                });
+                instance.post(self.url, {page:self.cur_page}).then((res) => {
                     // self.tableData = res.data.list;
                     self.tableData = list;
                 })
@@ -281,11 +244,19 @@
             },
             closePro: function (msg) {
                 this.proAddShow = msg;
+            },
+            closeMap: function (msg) {
+                this.mapSelectShow = msg;
+            },
+            setPosition(msg) {
+                this.position = msg.lng + ',' + msg.lat;
             }
+        },
+        mounted() {
+            this.getBreadcrumb();
         },
         watch: {
             '$route' (to, from) {
-                console.log(this.$route.params)
                 this.getBreadcrumb();
             }
         }

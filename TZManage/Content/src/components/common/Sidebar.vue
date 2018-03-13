@@ -37,7 +37,7 @@
                                     <el-menu-item v-for="(subSubItem,i) in subItem.subs"
                                                   :key="i"
                                                   :index="subSubItem.index"
-                                                  @click="routerTo(subSubItem.index, item.index, subItem.index, subSubItem.countyId)">
+                                                  @click="routerTo(subSubItem.index, item.index, subItem.index, subSubItem.third)">
                                         {{ subSubItem.title }}
                                     </el-menu-item>
                                     <!--三级菜单-->
@@ -86,40 +86,47 @@
                                 subs: [
                                     {
                                         index: 'Province_jj',
-                                        countyId: 'jj',
+                                        third: 'jj',
                                         title: '椒江区'
                                     },
                                     {
                                         index: 'Province_hy',
-                                        countyId: 'hy',
+                                        third: 'hy',
                                         title: '黄岩区'
                                     },
                                     {
                                         index: 'Province_lq',
+                                        third: 'lq',
                                         title: '路桥区'
                                     },
                                     {
                                         index: 'Province_lh',
+                                        third: 'lh',
                                         title: '临海市'
                                     },
                                     {
                                         index: 'Province_wl',
+                                        third: 'jj',
                                         title: '温岭市'
                                     },
                                     {
                                         index: 'Province_yh',
+                                        third: 'jj',
                                         title: '玉环市'
                                     },
                                     {
                                         index: 'Province_xj',
+                                        third: 'jj',
                                         title: '仙居县'
                                     },
                                     {
                                         index: 'Province_sm',
+                                        third: 'jj',
                                         title: '三门县'
                                     },
                                     {
                                         index: 'Province_tt',
+                                        third: 'jj',
                                         title: '天台县'
                                     }
                                 ]
@@ -323,6 +330,24 @@
         computed: {
             onRoutes() {
                 return this.$route.path.replace('/', '');
+            }
+        },
+        methods: {
+            routerTo(name, type, level, countyId) {
+                this.$router.push({
+                    path: name,
+                    // name: name,
+                    // params: {
+                    //     type: type,
+                    //     level: level,
+                    //     countyId: countyId
+                    // }
+                    query: {
+                        first: type,
+                        second: level,
+                        third: countyId
+                    }
+                })
             }
         }
     }
