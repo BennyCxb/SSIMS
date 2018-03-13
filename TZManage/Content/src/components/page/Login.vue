@@ -20,6 +20,7 @@
 
 <script>
     import Axios from 'axios';
+    import {setCookie,getCookie} from '../../assets/js/cookie.js'
     export default {
         data: function(){
             return {
@@ -39,7 +40,7 @@
         },
         methods: {
             submitForm(formName) {
-                const self = this;
+                // const self = this;
                 // self.$refs[formName].validate((valid) => {
                 //     if (valid) {
                 //         localStorage.setItem('ms_username',self.ruleForm.username);
@@ -57,6 +58,7 @@
                     let data = response.data;
                     console.log(data);
                     if (data.code === 1) {
+                        setCookie('TZManage', data.object, { expires: 12 });
                         localStorage.setItem('ms_username',self.ruleForm.username);
                         self.$router.push('/readme');
                     } else {
@@ -68,6 +70,9 @@
                 })
                 .catch(function (error) {
                     console.log(error);
+                    self.$alert(error.message, '温馨提示', {
+                        confirmButtonText: '确定'
+                    });
                 });
             }
         }
