@@ -65,6 +65,8 @@
 </template>
 
 <script>
+    import Axios from 'axios';
+    import _ from 'lodash';
     export default {
         data() {
             return {
@@ -349,6 +351,55 @@
                     }
                 })
             }
+        },
+        beforeCreate() {
+            let self = this;
+            Axios.get('Login/IsLogin')
+                .then(function (response) {
+                    let data = response.data.object;
+                    console.log(data);
+                    let items = [];
+                    let item1,
+                        item2,
+                        item3;
+                    _.each(data.MenuJson, (obj1) => {
+                        console.log(obj1);
+                        if (obj1.FChild.length > 0) {
+                            _.each(obj1.FChild, (obj2) => {
+                                if (obj2.FChild.length > 0) {
+                                    _.each(obj2.FChild, (obj3) => {
+                                        item3 = {
+                                            index: obj3.FUrlPath,
+                                            title: obj3.FName
+                                        }
+                                    })
+                                }
+                            })
+
+                            item2 = {
+                                index: obj1.FParentID,
+                                title: obj1.FName,
+
+                            }
+                        } else {
+                            item1 = {
+                                index: obj1.FParentID,
+                                title: obj1.FName
+                            }
+                        }
+
+                        items.push({
+                            index: obj1.FParentID,
+                            title: obj1.FName
+                        })
+                    })
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    self.$alert(error.message, '温馨提示', {
+                        confirmButtonText: '确定'
+                    });
+                });
         }
     }
 </script>
