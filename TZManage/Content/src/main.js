@@ -8,8 +8,11 @@ import 'element-ui/lib/theme-default/index.css';    // 默认主题
 import "babel-polyfill";
 Vue.use(ElementUI);
 
-// 引入
-import {setCookie, getCookie} from 'assets/js/cookie.js'
+// 引入cookie
+import {setCookie, getCookie} from 'assets/js/cookie.js';
+
+
+
 
 // 引入vue-amap
 import VueAMap from 'vue-amap';

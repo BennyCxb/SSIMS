@@ -102,6 +102,8 @@
 
 <script>
     import Axios from 'axios';
+    import _ from 'lodash';
+    import {formatDate} from '../../assets/js/date.js';
 
     export default {
         data() {
@@ -112,7 +114,7 @@
                     adcd: '331002',
                     town: '',
                     year: '',
-                    month: '',
+                    month: formatDate(new Date(), 'yyyy-MM'),
                     name: '',
                     proNum: '',
                     lineName: '',
@@ -176,12 +178,59 @@
             openMap() {
                 this.$emit('selectMap', true);
             },
-            save() {
-                Axios.post('LoanApply/SaveSJApply', {
-
+            getAdcd() {
+                let self = this;
+                Axios.get('Common/GetAgencyList')
+                    .then(function (response) {
+                        let data = response.data;
+                        let adcdlist = [];
+                        _.each(data.object, (obj) => {
+                            adcdlist.push({
+                                value: obj.FValue,
+                                label: obj.FName
+                            })
+                        })
+                        self.adcdOptions = [].concat(adcdlist);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        self.$alert(error.message, '温馨提示', {
+                            confirmButtonText: '确定'
+                        });
+                    });
+            },
+            getProblemType() {
+                let self = this;
+                Axios.get('Common/GetEnumList', {
+                    params: {
+                        FEnumTypeID: 4
+                    }
                 })
+                    .then(function (response) {
+                        let data = response.data;
+                        let ptypelist = [];
+                        _.each(data.object, (obj) => {
+                            ptypelist.push({
+                                value: obj.FValue,
+                                label: obj.FName
+                            })
+                        })
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        self.$alert(error.message, '温馨提示', {
+                            confirmButtonText: '确定'
+                        });
+                    });
+            },
+            save() {
+                Axios.post('LoanApply/SaveSJApply', {})
             }
         },
-        props: ['formShow', 'sposition']
+        props: ['formShow', 'sposition'],
+        created() {
+            this.getAdcd();
+            this.getProblemType();
+        }
     }
 </script>

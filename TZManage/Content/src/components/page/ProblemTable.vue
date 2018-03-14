@@ -12,7 +12,7 @@
                 <el-option v-for="(year, i) in years" :key="i" :label="year" :value="year"></el-option>
             </el-select>
             <el-select v-model="select_adcd" placeholder="行政区划" class="handle-select mr10">
-                <el-option v-for="(item, i) in adlist" :key="i" :label="item.adnm" :value="item.adcd"></el-option>
+                <el-option v-for="(item, i) in adlist" :key="i" :label="item.label" :value="item.value"></el-option>
             </el-select>
             <el-input v-model="select_area" placeholder="所属区域" class="handle-input mr10"></el-input>
             <el-input v-model="select_problem_num" placeholder="问题编号" class="handle-input mr10"></el-input>
@@ -69,6 +69,8 @@
 <script>
     import vProblemForm from './ProblemForm.vue';
     import mapSelect from './MapSelect.vue';
+    import Axios from 'axios';
+    import _ from 'lodash';
 
     export default {
         components:{
@@ -92,20 +94,7 @@
                 del_list: [],
                 is_search: false,
                 years: [2018,2017,2016],
-                adlist: [
-                    {
-                        adcd: 331002,
-                        adnm: '椒江区'
-                    },
-                    {
-                        adcd: 331003,
-                        adnm: '路桥区'
-                    },
-                    {
-                        adcd: 331004,
-                        adnm: '黄岩区'
-                    }
-                ],
+                adlist: [],
                 problems: [
                     {
                         id: 1,
@@ -198,6 +187,27 @@
                 // console.log(list)
                 this.breadcrumb = [].concat(list);
             },
+            getAdcd() {
+                let self = this;
+                Axios.get('Common/GetAgencyList')
+                    .then(function (response) {
+                        let data = response.data;
+                        let adcdlist = [];
+                        _.each(data.object, (obj) => {
+                            adcdlist.push({
+                                value: obj.FValue,
+                                label: obj.FName
+                            })
+                        })
+                        self.adlist = [].concat(adcdlist);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        self.$alert(error.message, '温馨提示', {
+                            confirmButtonText: '确定'
+                        });
+                    });
+            },
             getData(){
                 let self = this;
                 if(process.env.NODE_ENV === 'development'){
@@ -251,6 +261,9 @@
             setPosition(msg) {
                 this.position = msg.lng + ',' + msg.lat;
             }
+        },
+        created() {
+            this.getAdcd();
         },
         mounted() {
             this.getBreadcrumb();
