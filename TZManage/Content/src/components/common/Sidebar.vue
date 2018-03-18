@@ -18,7 +18,7 @@
             <!--</template>-->
 
             <!--一级菜单-->
-            <template v-for="item in items">
+            <template v-for="(item, i) in items">
                 <template v-if="item.subs">
                     <el-submenu :index="item.index">
                         <template slot="title">
@@ -37,14 +37,20 @@
                                     <el-menu-item v-for="(subSubItem,i) in subItem.subs"
                                                   :key="i"
                                                   :index="subSubItem.index"
-                                                  @click="routerTo(subSubItem.index, item.index, subItem.index, subSubItem.third)">
+                                                  @click="routerTo(item, subItem, subSubItem)"
+                                                  :route="{params: {
+                                                    id: 1
+                                                    }
+                                                  }">
                                         {{ subSubItem.title }}
                                     </el-menu-item>
                                     <!--三级菜单-->
                                 </el-submenu>
                             </template>
                             <template v-else>
-                                <el-menu-item :index="subItem.index">
+                                <el-menu-item :key="i"
+                                              :index="subItem.index"
+                                              @click="routerTo(item, subItem)">
                                     <i :class="subItem.icon"></i>{{ subItem.title }}
                                 </el-menu-item>
                             </template>
@@ -54,7 +60,8 @@
                     </el-submenu>
                 </template>
                 <template v-else>
-                    <el-menu-item :index="item.index">
+                    <el-menu-item :index="item.index"
+                                  @click="routerTo(item)">
                         <i :class="item.icon"></i>{{ item.title }}
                     </el-menu-item>
                 </template>
@@ -74,258 +81,9 @@
                     {
                         icon: 'el-icon-setting',
                         index: 'readme',
-                        title: '自述'
+                        title: '自述',
+                        url: 'readme'
                     },
-                    {
-                        icon: 'el-icon-menu',
-                        index: 'Problem',
-                        title: '问题点位',
-                        subs: [
-                            {
-                                // icon: 'el-icon-menu',
-                                index: 'Province',
-                                title: '省级问题',
-                                subs: [
-                                    {
-                                        index: 'Province_jj',
-                                        third: 'jj',
-                                        title: '椒江区'
-                                    },
-                                    {
-                                        index: 'Province_hy',
-                                        third: 'hy',
-                                        title: '黄岩区'
-                                    },
-                                    {
-                                        index: 'Province_lq',
-                                        third: 'lq',
-                                        title: '路桥区'
-                                    },
-                                    {
-                                        index: 'Province_lh',
-                                        third: 'lh',
-                                        title: '临海市'
-                                    },
-                                    {
-                                        index: 'Province_wl',
-                                        third: 'jj',
-                                        title: '温岭市'
-                                    },
-                                    {
-                                        index: 'Province_yh',
-                                        third: 'jj',
-                                        title: '玉环市'
-                                    },
-                                    {
-                                        index: 'Province_xj',
-                                        third: 'jj',
-                                        title: '仙居县'
-                                    },
-                                    {
-                                        index: 'Province_sm',
-                                        third: 'jj',
-                                        title: '三门县'
-                                    },
-                                    {
-                                        index: 'Province_tt',
-                                        third: 'jj',
-                                        title: '天台县'
-                                    }
-                                ]
-                            },
-                            {
-                                // icon: 'el-icon-menu',
-                                index: 'City',
-                                title: '市级问题',
-                                subs: [
-                                    {
-                                        index: 'City_jj',
-                                        countyId: 'jj',
-                                        title: '椒江区'
-                                    },
-                                    {
-                                        index: 'City_hy',
-                                        countyId: 'jj',
-                                        title: '黄岩区'
-                                    },
-                                    {
-                                        index: 'City_lq',
-                                        title: '路桥区'
-                                    },
-                                    {
-                                        index: 'City_lh',
-                                        title: '临海市'
-                                    },
-                                    {
-                                        index: 'City_wl',
-                                        title: '温岭市'
-                                    },
-                                    {
-                                        index: 'City_yh',
-                                        title: '玉环市'
-                                    },
-                                    {
-                                        index: 'City_xj',
-                                        title: '仙居县'
-                                    },
-                                    {
-                                        index: 'City_sm',
-                                        title: '三门县'
-                                    },
-                                    {
-                                        index: 'City_tt',
-                                        title: '天台县'
-                                    }
-                                ]
-                            },
-
-                            {
-                                // icon: 'el-icon-menu',
-                                index: 'County',
-                                title: '县级自查自纠点位',
-                                subs: [
-                                    {
-                                        index: 'County_jj',
-                                        title: '椒江区'
-                                    },
-                                    {
-                                        index: 'County_hy',
-                                        title: '黄岩区'
-                                    },
-                                    {
-                                        index: 'County_lq',
-                                        title: '路桥区'
-                                    },
-                                    {
-                                        index: 'County_lh',
-                                        title: '临海市'
-                                    },
-                                    {
-                                        index: 'County_wl',
-                                        title: '温岭市'
-                                    },
-                                    {
-                                        index: 'County_yh',
-                                        title: '玉环市'
-                                    },
-                                    {
-                                        index: 'County_xj',
-                                        title: '仙居县'
-                                    },
-                                    {
-                                        index: 'County_sm',
-                                        title: '三门县'
-                                    },
-                                    {
-                                        index: 'County_tt',
-                                        title: '天台县'
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        icon: 'el-icon-menu',
-                        index: '2',
-                        title: '桥下空间利用',
-                        subs: [
-                            {
-                                index: 'Bridgejj',
-                                title: '椒江区'
-                            },
-                            {
-                                index: '/Problem/county?hy',
-                                title: '黄岩区'
-                            },
-                            {
-                                index: '/Problem/county?lq',
-                                title: '路桥区'
-                            },
-                            {
-                                index: '/Problem/county?lh',
-                                title: '临海市'
-                            },
-                            {
-                                index: '/Problem/county?wl',
-                                title: '温岭市'
-                            },
-                            {
-                                index: '/Problem/county?yh',
-                                title: '玉环市'
-                            },
-                            {
-                                index: '/Problem/county?xj',
-                                title: '仙居县'
-                            },
-                            {
-                                index: '/Problem/county?sm',
-                                title: '三门县'
-                            },
-                            {
-                                index: '/Problem/county?tt',
-                                title: '天台县'
-                            }
-                        ]
-                    },
-                    {
-                        icon: 'el-icon-menu',
-                        index: '3',
-                        title: '精品示范道路',
-                        subs: [
-                            {
-                                icon: 'el-icon-menu',
-                                index: '3-1',
-                                title: '省级问题',
-                                subs: [
-                                    {
-                                        index: 'problem/all',
-                                        title: '全部'
-                                    },
-                                    {
-                                        index: 'vuetable',
-                                        title: '待审核'
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        icon: 'el-icon-menu',
-                        index: '4',
-                        title: '精品示范入城口',
-                        subs: [
-                            {
-                                icon: 'el-icon-menu',
-                                index: '4-1',
-                                title: '省级问题',
-                                subs: [
-                                    {
-                                        index: 'problem/all',
-                                        title: '全部'
-                                    },
-                                    {
-                                        index: 'vuetable',
-                                        title: '待审核'
-                                    }
-                                ]
-                            },
-                            {
-                                icon: 'el-icon-menu',
-                                index: '4-2',
-                                title: '市级问题',
-                                subs: [
-                                    {
-                                        index: 'problem/all',
-                                        title: '全部'
-                                    },
-                                    {
-                                        index: 'vuetable',
-                                        title: '待审核'
-                                    }
-                                ]
-                            }
-                        ]
-                    }
                 ]
             }
         },
@@ -335,20 +93,41 @@
             }
         },
         methods: {
-            routerTo(name, type, level, countyId) {
-                this.$router.push({
-                    path: name,
-                    // name: name,
-                    // params: {
-                    //     type: type,
-                    //     level: level,
-                    //     countyId: countyId
-                    // }
-                    query: {
-                        first: type,
-                        second: level,
-                        third: countyId
+            routerTo(f, s, t) {
+                // console.log(f,s,t)
+                let path;
+                let breadcrumb = [];
+                let billTypeID;
+                if (f.url === undefined) {
+                    breadcrumb.push(f.title);
+                    if (s.url === undefined) {
+                        breadcrumb.push(s.title);
+                        if (t.url === undefined) {
+                            breadcrumb.push(t.title);
+                        } else {
+                            // path = t.url + '/' + f.id + '/'  + s.id + '/'  + t.id;
+                            path = f.id + '-'  + s.id + '-'  + t.id;
+                            // path = t.url;
+                            breadcrumb.push(t.title);
+                            billTypeID = t.billTypeID;
+                        }
+                    } else {
+                        // path = s.url + '/'  + f.parentId + '/'  + s.parentId;
+                        path = f.parentId + '-'  + s.parentId;
+                        // path = s.url;
+                        breadcrumb.push(s.title);
+                        billTypeID = s.billTypeID;
                     }
+                } else {
+                    // path = f.url + '/'  + f.parentId;
+                    path = f.parentId;
+                    // path = f.url;
+                    breadcrumb.push(f.title);
+                    billTypeID = f.billTypeID;
+                }
+                sessionStorage.setItem('breadcrumb', JSON.stringify(breadcrumb));
+                this.$router.push({
+                    path: path
                 })
             }
         },
@@ -357,42 +136,76 @@
             Axios.get('Login/IsLogin')
                 .then(function (response) {
                     let data = response.data.object;
-                    console.log(data);
-                    let items = [];
-                    let item1,
-                        item2,
-                        item3;
-                    _.each(data.MenuJson, (obj1) => {
-                        console.log(obj1);
+                    // console.log(data);
+                    let items1 = [],
+                        items2 = [],
+                        items3 = [];
+
+                    // 一级菜单
+                    _.each(data.MenuJson, (obj1, index1) => {
                         if (obj1.FChild.length > 0) {
-                            _.each(obj1.FChild, (obj2) => {
+                            // 二级菜单
+                            _.each(obj1.FChild, (obj2, index2) => {
                                 if (obj2.FChild.length > 0) {
-                                    _.each(obj2.FChild, (obj3) => {
-                                        item3 = {
-                                            index: obj3.FUrlPath,
-                                            title: obj3.FName
-                                        }
+                                    // 三级菜单
+                                    _.each(obj2.FChild, (obj3, index3) => {
+                                        items3.push({
+                                            id: obj3.FID,
+                                            billTypeID: obj3.FBillTypeID,
+                                            index: obj1.FID.toString() + '-' + obj2.FID.toString() + '-' + obj3.FID.toString(),
+                                            parentId: obj3.FParentID,
+                                            title: obj3.FName,
+                                            // url: obj3.FUrlPath
+                                            url: '/ptable'
+                                        })
+                                    })
+                                    items2.push({
+                                        id: obj2.FID,
+                                        index: obj1.FID.toString() + '-' + obj2.FID.toString(),
+                                        parentId: obj2.FParentID,
+                                        title: obj2.FName,
+                                        subs: items3
+                                    })
+                                } else {
+                                    items2.push({
+                                        id: obj2.FID,
+                                        billTypeID: obj2.FBillTypeID,
+                                        index: obj1.FID.toString() + '-' + obj2.FID.toString(),
+                                        parentId: obj2.FParentID,
+                                        title: obj2.FName,
+                                        url: obj2.FUrlPath,
                                     })
                                 }
                             })
-
-                            item2 = {
-                                index: obj1.FParentID,
+                            items1.push({
+                                id: obj1.FID,
+                                icon: 'el-icon-menu',
+                                index: obj1.FID.toString(),
+                                parentId: obj1.FParentID,
                                 title: obj1.FName,
-
-                            }
+                                subs: items2
+                            })
                         } else {
-                            item1 = {
-                                index: obj1.FParentID,
-                                title: obj1.FName
-                            }
+                            items1.push({
+                                id: obj1.FID,
+                                billTypeID: obj1.FBillTypeID,
+                                icon: 'el-icon-menu',
+                                index: obj1.FID.toString(),
+                                parentId: obj1.FParentID,
+                                title: obj1.FName,
+                                // url: obj1.FUrlPath,
+                                url: 'qxkj',
+                            })
                         }
-
-                        items.push({
-                            index: obj1.FParentID,
-                            title: obj1.FName
-                        })
                     })
+
+                    console.log(items1)
+                    self.items = [{
+                        icon: 'el-icon-setting',
+                        index: 'readme',
+                        title: '自述',
+                        url: 'readme'
+                    }].concat(items1);
                 })
                 .catch(function (error) {
                     console.log(error);

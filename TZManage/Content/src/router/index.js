@@ -18,135 +18,146 @@ export default new Router({
                     component: resolve => require(['../components/page/Readme.vue'], resolve)
                 },
                 {
-                    path: '/Province',
-                    component: resolve => require(['../components/page/ProblemTable.vue'], resolve),
-                    children:[
-                        {
-                            path: '/Province_jj',
-                            name: 'Province_jj',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/Province_hy',
-                            name: 'Province_hy',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/Province_lq',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/Province_lh',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/Province_wl',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/Province_yh',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/Province_xj',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/Province_sm',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/Province_tt',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        }
-                    ]
+                    path: '/:fid-:sid-:tid',
+                    // path: '/ptable',
+                    name: 'ptable',
+                    component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
                 },
                 {
-                    path: '/City',
-                    component: resolve => require(['../components/page/ProblemTable.vue'], resolve),
-                    children:[
-                        {
-                            path: '/City_jj',
-                            name: 'City_jj',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/City_hy',
-                            name: 'City_hy',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/City_lq',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/City_lh',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/City_wl',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/City_yh',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/City_xj',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/City_sm',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/City_tt',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        }
-                    ]
+                    path: '/qxkj',
+                    name: 'qxkj',
+                    component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
                 },
-                {
-                    path: '/County_',
-                    component: resolve => require(['../components/page/ProblemTable.vue'], resolve),
-                    children:[
-                        {
-                            path: '/County_jj',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/County_hy',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/County_lq',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/County_lh',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/County_wl',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/County_yh',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/County_xj',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/County_sm',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        },
-                        {
-                            path: '/County_tt',
-                            component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
-                        }
-                    ]
-                },
+                // {
+                //     path: '/Province',
+                //     component: resolve => require(['../components/page/ProblemTable.vue'], resolve),
+                //     children:[
+                //         {
+                //             path: '/Province_jj',
+                //             name: 'Province_jj',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/Province_hy',
+                //             name: 'Province_hy',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/Province_lq',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/Province_lh',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/Province_wl',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/Province_yh',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/Province_xj',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/Province_sm',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/Province_tt',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         }
+                //     ]
+                // },
+                // {
+                //     path: '/City',
+                //     component: resolve => require(['../components/page/ProblemTable.vue'], resolve),
+                //     children:[
+                //         {
+                //             path: '/City_jj',
+                //             name: 'City_jj',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/City_hy',
+                //             name: 'City_hy',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/City_lq',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/City_lh',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/City_wl',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/City_yh',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/City_xj',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/City_sm',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/City_tt',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         }
+                //     ]
+                // },
+                // {
+                //     path: '/County_',
+                //     component: resolve => require(['../components/page/ProblemTable.vue'], resolve),
+                //     children:[
+                //         {
+                //             path: '/County_jj',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/County_hy',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/County_lq',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/County_lh',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/County_wl',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/County_yh',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/County_xj',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/County_sm',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         },
+                //         {
+                //             path: '/County_tt',
+                //             component: resolve => require(['../components/page/ProblemTable.vue'], resolve)
+                //         }
+                //     ]
+                // },
                 {
                     path: '/Bridgejj',
                     component: resolve => require(['../components/page/ProblemTable.vue'], resolve)

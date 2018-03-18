@@ -15,12 +15,15 @@
                 <el-option v-for="(item, i) in adlist" :key="i" :label="item.label" :value="item.value"></el-option>
             </el-select>
             <el-input v-model="select_area" placeholder="所属区域" class="handle-input mr10"></el-input>
-            <el-input v-model="select_problem_num" placeholder="问题编号" class="handle-input mr10"></el-input>
+            <el-select v-model="select_problem" placeholder="四边" class="handle-select mr10">
+                <el-option v-for="(item, i) in edgeOptions" :key="i" :label="item.label" :value="item.id"></el-option>
+            </el-select>
             <el-select v-model="select_problem" placeholder="存在问题" class="handle-select mr10">
-                <el-option v-for="(item, i) in problems" :key="i" :label="item.label" :value="item.id"></el-option>
+                <el-option v-for="(item, i) in proOptions" :key="i" :label="item.label" :value="item.id"></el-option>
             </el-select>
         </div>
         <div class="handle-box">
+            <el-input v-model="select_problem_num" placeholder="问题编号" class="handle-input mr10"></el-input>
             <el-input v-model="select_word" placeholder="筛选关键词" class="handle-input mr10"></el-input>
             <el-button type="primary" icon="search" @click="search">搜索</el-button>
             <el-button type="primary" icon="plus" @click="search">添加项目</el-button>
@@ -79,6 +82,7 @@
         },
         data() {
             return {
+                msg: '',
                 url: './static/vuetable.json',
                 position: '',
                 tableData: [],
@@ -95,13 +99,8 @@
                 is_search: false,
                 years: [2018,2017,2016],
                 adlist: [],
-                problems: [
-                    {
-                        id: 1,
-                        label: '乱堆乱放'
-                    }
-                ],
-
+                proOptions: [],
+                edgeOptions: [],
                 proAddShow: false,
                 mapSelectShow: false,
                 breadcrumb: []
@@ -139,53 +138,8 @@
                 this.getData();
             },
             getBreadcrumb(){
-                let list = []
-                // console.log(this.$route.query);
-                let first = this.$route.query.first;
-                let second = this.$route.query.second;
-                let third = this.$route.query.third;
-                if (first || first === 'Problem') {
-                    list.push('问题点位');
-                }
-                if (second || second === 'Province') {
-                    list.push('省级点位');
-                } else if (second || second === 'City') {
-                    list.push('市级点位');
-                } else if (second || second === 'City') {
-                    list.push('县级自查自纠点位');
-                }
-
-                switch (third) {
-                    case 'jj':
-                        list.push('椒江区');
-                        break;
-                    case 'hy':
-                        list.push('黄岩区');
-                        break;
-                    case 'lq':
-                        list.push('路桥区');
-                        break;
-                    case 'lh':
-                        list.push('临海市');
-                        break;
-                    case 'wl':
-                        list.push('温岭市');
-                        break;
-                    case 'yh':
-                        list.push('玉环市');
-                        break;
-                    case 'xj':
-                        list.push('仙居县');
-                        break;
-                    case 'sm':
-                        list.push('三门县');
-                        break;
-                    case 'tt':
-                        list.push('天台县');
-                        break;
-                }
-                // console.log(list)
-                this.breadcrumb = [].concat(list);
+                let blist = JSON.parse(sessionStorage.getItem('breadcrumb'));
+                this.breadcrumb = [].concat(blist);
             },
             getAdcd() {
                 let self = this;
@@ -200,6 +154,56 @@
                             })
                         })
                         self.adlist = [].concat(adcdlist);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        self.$alert(error.message, '温馨提示', {
+                            confirmButtonText: '确定'
+                        });
+                    });
+            },
+            getEdge() {
+                let self = this;
+                Axios.get('Common/GetEnumList', {
+                    params: {
+                        EnumType: '四边'
+                    }
+                })
+                    .then(function (response) {
+                        let data = response.data;
+                        let list = [];
+                        _.each(data.object, (obj) => {
+                            list.push({
+                                value: obj.FValue,
+                                label: obj.FName
+                            })
+                        })
+                        self.edgeOptions = [].concat(list);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        self.$alert(error.message, '温馨提示', {
+                            confirmButtonText: '确定'
+                        });
+                    });
+            },
+            getProblemType() {
+                let self = this;
+                Axios.get('Common/GetEnumList', {
+                    params: {
+                        EnumType: '问题类型'
+                    }
+                })
+                    .then(function (response) {
+                        let data = response.data;
+                        let ptypelist = [];
+                        _.each(data.object, (obj) => {
+                            ptypelist.push({
+                                value: obj.FValue,
+                                label: obj.FName
+                            })
+                        })
+                        self.proOptions = [].concat(ptypelist);
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -260,19 +264,34 @@
             },
             setPosition(msg) {
                 this.position = msg.lng + ',' + msg.lat;
+            },
+            getStatus (urlStr) {
+                var urlStrArr = urlStr.split('/')
+                return urlStrArr[urlStrArr.length - 1]
             }
         },
         created() {
             this.getAdcd();
+            this.getEdge();
+            this.getProblemType();
         },
         mounted() {
             this.getBreadcrumb();
         },
         watch: {
+            // $route (to, from) {
+            //     console.log(to)
+            //     console.log(from)
+            //     this.getBreadcrumb();
+            // }
             '$route' (to, from) {
+                //刷新参数放到这里里面去触发就可以刷新相同界面了
+                console.log(to);
+                console.log(from);
+                this.getStatus(this.$route.path);
                 this.getBreadcrumb();
             }
-        }
+        },
     }
 
     const list = [

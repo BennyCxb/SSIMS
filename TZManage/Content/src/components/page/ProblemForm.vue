@@ -65,7 +65,7 @@
                     <el-form-item label="问题分类" :label-width="formLabelWidth">
                         <el-select v-model="formInline.proType" placeholder="请选择问题分类">
                             <el-option
-                                v-for="(item, i) in proOption"
+                                v-for="(item, i) in proOptions"
                                 :key="i"
                                 :label="item.label"
                                 :value="item.value">
@@ -121,34 +121,11 @@
                     mileage: '',
                     proDescribe: '',
                     duration: '',
-                    proType: '0'
+                    proType: 1
                 },
                 formLabelWidth: '120px',
-                adcdOptions: [{
-                    value: '331002',
-                    label: '椒江区'
-                }, {
-                    value: 'fankui',
-                    label: '路桥区'
-                }, {
-                    value: 'xiaolv',
-                    label: '黄岩区'
-                }
-                ],
-                proOption: [
-                    {
-                        value: '0',
-                        label: '乱搭乱建'
-                    },
-                    {
-                        value: '1',
-                        label: '乱堆乱放'
-                    },
-                    {
-                        value: '2',
-                        label: '废品垃圾'
-                    }
-                ],
+                adcdOptions: [],
+                proOptions: [],
                 rules: {
                     adcd: [
                         {required: true, message: '请选择行政区划', trigger: 'change'}
@@ -203,7 +180,7 @@
                 let self = this;
                 Axios.get('Common/GetEnumList', {
                     params: {
-                        FEnumTypeID: 4
+                        EnumType: '问题类型'
                     }
                 })
                     .then(function (response) {
@@ -215,6 +192,7 @@
                                 label: obj.FName
                             })
                         })
+                        self.proOptions = [].concat(ptypelist);
                     })
                     .catch(function (error) {
                         console.log(error);
