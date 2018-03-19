@@ -68,5 +68,11 @@ namespace BT.Manage.Model
             /// </summary>
             [Display(Name = @"新增用户ID")]
             public int? FAddUserID{ get; set; }
+
+        /// <summary>
+        /// 附件类型ID
+        /// </summary>
+        [Display(Name ="附件类型ID")]
+        public int? FAttachmentTypeID { get; set; }
     }
 }

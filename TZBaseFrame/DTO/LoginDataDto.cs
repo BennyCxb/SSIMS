@@ -50,6 +50,11 @@ namespace TZManageAPI.DTO
         /// </summary>
         public string User_FDataAt { get; set; }
 
+        /// <summary>
+        /// 行政规划等级  1.市级 2.县级一级  3.县级二级
+        /// </summary>
+        public int FLevel { get; set; }
+
     }
 
     public class LoginDto

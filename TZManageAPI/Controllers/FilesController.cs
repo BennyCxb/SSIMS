@@ -11,12 +11,18 @@ using TZManageAPI.Common;
 using BT.Manage.Core;
 using BT.Manage.Tools;
 using BT.Manage.Tools.Utils;
+using System.Data;
+using TZManageAPI.DTO;
 
 namespace TZManageAPI.Controllers
 {
     [JwtAuthActionFilter]
     public class FilesController : BaseController
     {
+        /// <summary>
+        /// 上传附件到七牛
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public Result UploadFileForQiNiu()
         {
@@ -54,6 +60,48 @@ namespace TZManageAPI.Controllers
                 result.message = "附件上传失败:" + ex.Message;
             }
             
+            return result;
+        }
+
+
+        /// <summary>
+        /// 获取七牛的附件地址
+        /// </summary>
+        /// <param name="FLoanID">核准单ID</param>
+        /// <param name="FBillTypeID">单据类型</param>
+        /// <param name="FAttachType">附件类型</param>
+        /// <returns></returns>
+        [HttpGet]
+        public Result GetFilesUrl(int FLoanID,int FBillTypeID,int FAttachType)
+        {
+            Result result = new Result();
+            result.code = 0;
+            List<FileDTO> fileList = new List<FileDTO>();
+
+            DataTable dt= ModelOpretion.SearchDataRetunDataTable(@"select f.FQiNiuKey,FFileName 
+                                                    from t_loan_Files f
+                                                    where f.FLoanID=@FLoanID and f.FBillTypeID=@FBillTypeID and f.FAttachmentTypeID=@FAttachmentTypeID ",
+                                                    new { FLoanID= FLoanID, FBillTypeID= FBillTypeID , FAttachmentTypeID = FAttachType });
+            
+            foreach(DataRow dr in dt.Rows)
+            {
+                string filekey = dr["FQiNiuKey"].ToString();
+                //根据key获取私有空间文件地址
+                Result urlResult= FileTools.GetPrivateUrl(filekey);
+                if(urlResult.code==1)
+                {
+                    FileDTO file = new FileDTO()
+                    {
+                        FileName = dr["FFileName"].ToString(),
+                        FileUrl = urlResult.@object
+                    };
+                    fileList.Add(file);
+                }
+            }
+
+            result.code = 1;
+            result.@object = fileList;
+
             return result;
         }
     }

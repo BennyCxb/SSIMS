@@ -20,6 +20,9 @@ namespace TZManageAPI.Common
             result.code = 0;
             try
             {
+                //文件名（去除扩展名）
+                string fileFirstName =  Path.GetFileNameWithoutExtension(fileName);
+                string FQiNiuKey = fileFirstName+"A" + FLoanID.ToString()+"B"+FBillTypeID.ToString()+"T"+DateTime.Now.ToString("yyyyMMdd");
                 loanFilesInfo fileInfo = new loanFilesInfo()
                 {
                     FAddTime = DateTime.Now,
@@ -28,10 +31,10 @@ namespace TZManageAPI.Common
                     FFileName = fileName,
                     FIsQiNiu = 1,
                     FLoanID = FLoanID,
-                    FQiNiuKey = fileName
+                    FQiNiuKey = FQiNiuKey
                 };
-
-                Result upLoadresult = UploadFiles.UploadFilesForQiNiu(file, fileName);
+                
+                Result upLoadresult = UploadFiles.UploadFilesForQiNiu(file, FQiNiuKey);
 
                 if (upLoadresult.code == 1)
                 {
@@ -53,6 +56,14 @@ namespace TZManageAPI.Common
 
             return result;
             
+        }
+
+
+        public static Result GetPrivateUrl(string fileKey)
+        {
+            Result result= UploadFiles.GetQiNiuPrivateUrl(fileKey);
+
+            return result;
         }
     }
 }
