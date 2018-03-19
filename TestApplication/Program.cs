@@ -22,17 +22,19 @@ namespace TestApplication
             //CacheHelper.CacheSet<Result>("1234", result, 1);
             //Result info = CacheHelper.CacheGet<Result>("1234");
 
-            FlowModel flowModel = new FlowModel();
-            flowModel.FBillTypeID = 1000011;
-            flowModel.FCurrentLevel = 20;
-            flowModel.FlowMessage = "通过";
-            flowModel.FFlowResult = 1;
-            flowModel.FID = 1;
-            flowModel.UserID = 1;
-            result=DoFlow.DoAdopt(flowModel);
+            //FlowModel flowModel = new FlowModel();
+            //flowModel.FBillTypeID = 1000011;
+            //flowModel.FCurrentLevel = 20;
+            //flowModel.FlowMessage = "通过";
+            //flowModel.FFlowResult = 1;
+            //flowModel.FID = 1;
+            //flowModel.UserID = 1;
+            //result=DoFlow.DoAdopt(flowModel);
 
+            result= UploadFiles.UploadFilesForQiNiu("C:\\Users\\admin\\Desktop\\config设置1.png", "config设置1.png");
+            //result = UploadFiles.GetQiNiuPrivateUrl("下载.jpg");
 
-
+            //result = UploadFiles.GetQiNiuPrivateUrl("下载.jpg");
 
             Console.ReadKey();
         }

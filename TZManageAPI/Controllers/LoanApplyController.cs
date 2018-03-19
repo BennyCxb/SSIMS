@@ -12,6 +12,8 @@ using System.Web.Http;
 using TZBaseFrame.Attributes;
 using TZManageAPI.Base;
 using BT.Manage.Core;
+using FLow;
+using TZManageAPI.Common;
 
 namespace TZManageAPI.Controllers
 {
@@ -106,6 +108,7 @@ namespace TZManageAPI.Controllers
                 {
                     info.FAddUserID = UserInfo.UserId;
                     info.FAddTime = DateTime.Now;
+                    info.FBillNo= BillNo.GetBillNo(info.FBillTypeID, info.FAgencyValue);
                     int id = info.SaveOnSubmit();
                     if (id > 0)
                     {
@@ -121,6 +124,23 @@ namespace TZManageAPI.Controllers
                 result.code = 0;
                 result.message = "保存省级问题表单出错";
             }
+
+            return result;
+        }
+
+
+        /// <summary>
+        /// 省级问题提交
+        /// </summary>
+        /// <param name="flowModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public Result SubmitSJApply([FromBody]FlowModel flowModel)
+        {
+            Result result = new Result();
+            result.code = 0;
+
+            result= DoFlow.DoSubmit(flowModel);
 
             return result;
         }

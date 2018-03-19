@@ -97,7 +97,21 @@ namespace FLow
         public static Result DoAdopt(FlowModel flowModel)
         {
             Result result = new Result();
-            
+            //验证基础参数
+            if (flowModel == null)
+            {
+                result.code = 0;
+                result.message = "流程基础参数不可为空。";
+            }
+            else if (flowModel.FID == 0 || flowModel.FBillTypeID == 0 || flowModel.UserID == 0)
+            {
+                result.code = 0;
+                result.message = "流程基础参数不可为空。";
+            }
+            if (result.code == 0)
+            {
+                return result;
+            }
 
             try
             {

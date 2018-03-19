@@ -239,6 +239,16 @@ where {1} = @FID  ", flowModel.TableName, flowModel.KeyFiledName), new {  FID = 
                 result.message = "当前状态不允许驳回";
                 return result;
             }
+            //数据库level和前端level是否一致
+            LoanApplyInfo info = ModelOpretion.FirstOrDefault<LoanApplyInfo>(flowModel.FID);
+            if (info.FCheckLevel != flowModel.FCurrentLevel)
+            {
+                result.code = 0;
+                result.message = "当前状态不允许驳回。";
+                return result;
+            }
+
+
 
             return result;
         }

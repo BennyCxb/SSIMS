@@ -47,8 +47,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseAgencyInfo.cs" />
+    <Compile Include="BaseAttachmentTypeInfo.cs" />
     <Compile Include="BaseEnumValueInfo.cs" />
     <Compile Include="LoanApplyInfo.cs" />
+    <Compile Include="loanFilesInfo.cs" />
     <Compile Include="tsysFlowInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

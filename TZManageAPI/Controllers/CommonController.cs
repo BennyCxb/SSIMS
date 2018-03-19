@@ -51,7 +51,6 @@ namespace TZManageAPI.Controllers
 
             result.code = 1;
             result.@object = dt;
-
             return result;
 
         }
