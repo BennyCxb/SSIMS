@@ -118,15 +118,15 @@
                     let url;
                     // 一级菜单
                     _.each(data.MenuJson, (obj1) => {
-                        if (obj1.FName === '问题点位') {
-                            url = 'ptable';
-                        } else if (obj1.FName === '桥下空间利用') {
-                            url = 'btable';
-                        } else if (obj1.FName === '精品示范道路') {
-                            url = 'rtable';
-                        } else if (obj1.FName === '精品示范入城口') {
-                            url = 'ctable';
-                        }
+                        // if (obj1.FName === '问题点位') {
+                        //     url = 'ptable';
+                        // } else if (obj1.FName === '桥下空间利用') {
+                        //     url = 'btable';
+                        // } else if (obj1.FName === '精品示范道路') {
+                        //     url = 'rtable';
+                        // } else if (obj1.FName === '精品示范入城口') {
+                        //     url = 'ctable';
+                        // }
                         if (obj1.FChild.length > 0) {
                             // 二级菜单
                             _.each(obj1.FChild, (obj2) => {
@@ -136,7 +136,7 @@
                                         items3.push({
                                             id: obj3.FID,
                                             billTypeID: obj3.FBillTypeID,
-                                            index: url + obj1.FID.toString() + '-' + obj2.FID.toString() + '-' + obj3.FID.toString(),
+                                            index: obj3.FUrlPath + obj1.FID.toString() + '-' + obj2.FID.toString() + '-' + obj3.FID.toString() + '-' + obj3.FBillTypeID,
                                             parentId: obj3.FParentID,
                                             title: obj3.FName,
                                             url: obj3.FUrlPath,
@@ -145,7 +145,7 @@
                                     })
                                     items2.push({
                                         id: obj2.FID,
-                                        index: url + obj1.FID.toString() + '-' + obj2.FID.toString(),
+                                        index: obj2.FUrlPath + obj1.FID.toString() + '-' + obj2.FID.toString() + '-' + obj2.FBillTypeID,
                                         parentId: obj2.FParentID,
                                         title: obj2.FName,
                                         subs: items3,
@@ -155,7 +155,7 @@
                                     items2.push({
                                         id: obj2.FID,
                                         billTypeID: obj2.FBillTypeID,
-                                        index: url + obj1.FID.toString() + '-' + obj2.FID.toString(),
+                                        index: obj2.FUrlPath + obj1.FID.toString() + '-' + obj2.FID.toString() + '-' + obj2.FBillTypeID,
                                         parentId: obj2.FParentID,
                                         title: obj2.FName,
                                         url: obj2.FUrlPath,
@@ -166,8 +166,8 @@
                             items1.push({
                                 id: obj1.FID,
                                 icon: 'el-icon-menu',
-                                index: url + obj1.FID.toString(),
-                                parentId: obj1.FParentID,
+                                index: obj1.FUrlPath + obj1.FID.toString() + '-' + obj1.FBillTypeID,
+                                parentId: obj1.FParentID.toString(),
                                 title: obj1.FName,
                                 subs: items2,
                                 disabled: false
@@ -177,8 +177,8 @@
                                 id: obj1.FID,
                                 billTypeID: obj1.FBillTypeID,
                                 icon: 'el-icon-menu',
-                                index: url + obj1.FID.toString(),
-                                parentId: obj1.FParentID,
+                                index: obj1.FUrlPath + obj1.FID.toString() + '-' + obj1.FBillTypeID,
+                                parentId: obj1.FParentID.toString(),
                                 title: obj1.FName,
                                 url: obj1.FUrlPath,
                                 disabled: obj1.FUrlPath ? false : 'disabled'
@@ -196,9 +196,7 @@
                 })
                 .catch(function (error) {
                     console.log(error);
-                    self.$alert(error.message, '温馨提示', {
-                        confirmButtonText: '确定'
-                    });
+                    this.$message.error(error.message);
                 });
         }
     }
