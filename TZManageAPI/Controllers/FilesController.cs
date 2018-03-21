@@ -13,6 +13,7 @@ using BT.Manage.Tools;
 using BT.Manage.Tools.Utils;
 using System.Data;
 using TZManageAPI.DTO;
+using BT.Manage.Model;
 
 namespace TZManageAPI.Controllers
 {
@@ -101,6 +102,22 @@ namespace TZManageAPI.Controllers
 
             result.code = 1;
             result.@object = fileList;
+
+            return result;
+        }
+
+        /// <summary>
+        /// 获取文件类型列表
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public Result GetAttachTypeList(int FBillTypeID)
+        {
+            Result result = new Result();
+            IList<BaseAttachmentTypeInfo> attachTypeList = ModelOpretion.ModelList<BaseAttachmentTypeInfo>(p=>p.FBillTypeID==FBillTypeID);
+
+            result.code = 1;
+            result.@object = attachTypeList;
 
             return result;
         }

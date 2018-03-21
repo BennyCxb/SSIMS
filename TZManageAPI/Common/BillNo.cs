@@ -25,7 +25,7 @@ namespace TZManageAPI.Common
             }
             
             DateTime date= DateTime.Now;
-            DataTable dt= ModelOpretion.SearchDataRetunDataTable(" exec [dbo].[Prc_GetBillNo] @FBillTypeID @FDate @FMiddlefix  ",new { FBillTypeID = FBillTypeID , FDate =date, FMiddlefix = middleString });
+            DataTable dt= ModelOpretion.SearchDataRetunDataTable(" exec [dbo].[Prc_GetBillNo] @FBillTypeID,@FDate,@FMiddlefix  ",new { FBillTypeID = FBillTypeID , FDate =date, FMiddlefix = middleString });
             if(dt.Rows.Count>0)
             {
                 billNo = dt.Rows[0][0].ToSafeString();

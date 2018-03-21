@@ -14,6 +14,7 @@ using TZManageAPI.Base;
 using BT.Manage.Core;
 using FLow;
 using TZManageAPI.Common;
+using BT.Manage.Tools.Utils;
 
 namespace TZManageAPI.Controllers
 {
@@ -74,12 +75,12 @@ namespace TZManageAPI.Controllers
         {
             Result result = new Result();
             result.code = 0;
-            if(string.IsNullOrWhiteSpace(info.FBillNo))
-            {
-                result.code = 0;
-                result.message = "请检查表单数据！";
-                return result;
-            }
+            //if(string.IsNullOrWhiteSpace(info.FBillNo))
+            //{
+            //    result.code = 0;
+            //    result.message = "请检查表单数据！";
+            //    return result;
+            //}
             
             try
             {
@@ -87,7 +88,7 @@ namespace TZManageAPI.Controllers
                 if (info.FID > 0)
                 {
                     //只有保存状态可以修改数据
-                    if (info.FStatus != 0)
+                    if (info.FStatus.ToSafeInt32(0) != 0)
                     {
                         result.code = 0;
                         result.message = "当前状态不允许修改！";
@@ -108,6 +109,8 @@ namespace TZManageAPI.Controllers
                 {
                     info.FAddUserID = UserInfo.UserId;
                     info.FAddTime = DateTime.Now;
+                    info.FStatus = 0;
+                    info.FAgencyName = ModelOpretion.FirstOrDefault<BaseAgencyInfo>(p=>p.FValue==info.FAgencyValue).FName;
                     info.FBillNo= BillNo.GetBillNo(info.FBillTypeID, info.FAgencyValue);
                     int id = info.SaveOnSubmit();
                     if (id > 0)

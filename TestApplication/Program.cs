@@ -1,5 +1,6 @@
 ﻿using BLL;
 using BT.Manage.Frame.Base;
+using BT.Manage.Tools;
 using FLow;
 using Newtonsoft.Json;
 using System;
@@ -31,10 +32,12 @@ namespace TestApplication
             //flowModel.UserID = 1;
             //result=DoFlow.DoAdopt(flowModel);
 
-            result= UploadFiles.UploadFilesForQiNiu("C:\\Users\\admin\\Desktop\\config设置1.png", "config设置1.png");
+            //result= UploadFiles.UploadFilesForQiNiu("C:\\Users\\admin\\Desktop\\config设置1.png", "config设置1.png");
             //result = UploadFiles.GetQiNiuPrivateUrl("下载.jpg");
 
             //result = UploadFiles.GetQiNiuPrivateUrl("下载.jpg");
+
+            LogService.Default.Fatal("111");
 
             Console.ReadKey();
         }

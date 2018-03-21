@@ -185,6 +185,7 @@
   <ItemGroup>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="NLog.xml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -220,6 +221,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="NLog.config" />
     <None Include="Properties\PublishProfiles\apipulisher.pubxml" />
   </ItemGroup>
   <PropertyGroup>

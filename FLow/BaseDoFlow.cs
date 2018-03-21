@@ -247,9 +247,7 @@ where {1} = @FID  ", flowModel.TableName, flowModel.KeyFiledName), new {  FID = 
                 result.message = "当前状态不允许驳回。";
                 return result;
             }
-
-
-
+            
             return result;
         }
 
@@ -475,6 +473,21 @@ where {1} = @FID  ", flowModel.TableName, flowModel.KeyFiledName), new {  FID = 
                     da.Close();
                 }
             }
+            return result;
+        }
+
+        /// <summary>
+        /// 驳回的内置业务逻辑(不确定有没有通用性，先不写)
+        /// </summary>
+        /// <param name="flowModel"></param>
+        /// <returns></returns>
+        protected static Result DoRejectBase(FlowModel flowModel)
+        {
+            //SqlDataAccess da = DataAccessFactory.CreateSqlDataAccessWriter(conn);
+            //da.Open();
+            Result result = new Result();
+            result.code = 1;
+
             return result;
         }
     }
