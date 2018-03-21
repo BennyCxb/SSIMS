@@ -8,46 +8,81 @@
         </div>
         <div class="handle-box">
             <!--<el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>-->
-            <el-select v-model="select_years" placeholder="年度" class="handle-select mr10">
-                <el-option v-for="(year, i) in years" :key="i" :label="year" :value="year"></el-option>
+            <el-date-picker
+                class="handle-select"
+                v-model="select_years"
+                align="right"
+                type="year"
+                placeholder="选择年">
+            </el-date-picker>
+            <el-date-picker
+                class="handle-select"
+                v-model="select_mouths"
+                format="MM"
+                type="month"
+                placeholder="选择月">
+            </el-date-picker>
+            <el-select v-model="select_adcd" class="handle-select" placeholder="请选择" clearable>
+                <el-option
+                    v-for="item in adlist"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                    <span style="float: left">{{ item.label }}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
+                </el-option>
             </el-select>
-            <el-select v-model="select_adcd" placeholder="行政区划" class="handle-select mr10">
-                <el-option v-for="(item, i) in adlist" :key="i" :label="item.label" :value="item.value"></el-option>
+            <!--<el-select v-model="select_adcd" placeholder="行政区划" class="handle-select mr10">-->
+                <!--<el-option v-for="(item, i) in adlist" :key="i" :label="item.label" :value="item.value"></el-option>-->
+            <!--</el-select>-->
+            <!--<el-input v-model="select_area" placeholder="所属区域" class="handle-input mr10"></el-input>-->
+            <el-select v-model="select_edge" placeholder="四边" class="handle-select mr10" clearable>
+                <el-option v-for="(item, i) in edgeOptions" :key="i" :label="item.label" :value="item.value"></el-option>
             </el-select>
-            <el-input v-model="select_area" placeholder="所属区域" class="handle-input mr10"></el-input>
-            <el-input v-model="select_problem_num" placeholder="问题编号" class="handle-input mr10"></el-input>
-            <el-select v-model="select_problem" placeholder="存在问题" class="handle-select mr10">
-                <el-option v-for="(item, i) in problems" :key="i" :label="item.label" :value="item.id"></el-option>
+            <el-select v-model="select_problem" placeholder="存在问题" class="handle-select mr10" clearable>
+                <el-option v-for="(item, i) in proOptions" :key="i" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+            <el-select v-model="select_status" placeholder="审核状态" class="handle-select mr10" clearable>
+                <el-option v-for="(item, i) in staOptions" :key="i" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+            <el-select v-model="select_cttatus" placeholder="整改状态" class="handle-select mr10" clearable>
+                <el-option v-for="(item, i) in cstaOptions" :key="i" :label="item.label" :value="item.value"></el-option>
             </el-select>
         </div>
         <div class="handle-box">
-            <el-input v-model="select_word" placeholder="筛选关键词" class="handle-input mr10"></el-input>
+            <el-input v-model="select_problem_num" placeholder="问题编号" class="handle-input mr10"></el-input>
             <el-button type="primary" icon="search" @click="search">搜索</el-button>
-            <el-button type="primary" icon="plus" @click="search">添加项目</el-button>
-            <el-button type="primary" icon="printer" @click="search">数据导出</el-button>
+            <!--<el-button type="primary" icon="plus" @click="search">添加项目</el-button>-->
+            <!--<el-button type="primary" icon="printer" @click="search">数据导出</el-button>-->
             <el-button type="primary" icon="upload2" @click="proAddShow = true">上报问题</el-button>
+            <!--<router-link :to="'ProblemAdd'">-->
+                <!--<el-button type="primary" icon="upload2">上报问题</el-button>-->
+            <!--</router-link>-->
+
 
             <vProblemForm :formShow="proAddShow" :sposition="position" @closeProAdd="closePro" @selectMap="closeMap"></vProblemForm>
             <map-select :mapShow="mapSelectShow" @selectMap="closeMap" @selectPosition="setPosition"></map-select>
 
-            <el-button type="primary" icon="" @click="search">整改完成</el-button>
+            <!--<el-button type="primary" icon="" @click="search">整改完成</el-button>-->
         </div>
         <el-table :data="data" border style="width: 100%" ref="multipleTable" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="adnm" label="行政区划" sortable width="150">
+            <el-table-column prop="FAgencyName" label="行政区划" sortable>
             </el-table-column>
-            <el-table-column prop="problemNum" label="问题编号" width="120">
+            <el-table-column prop="FBillNo" label="问题编号">
             </el-table-column>
-            <el-table-column prop="lineName" label="线路名称" >
+            <el-table-column prop="FLineName" label="线路名称" >
             </el-table-column>
-            <el-table-column prop="mileage" label="里程" >
+            <el-table-column prop="FMileage" label="里程" >
             </el-table-column>
-            <el-table-column prop="problemName" label="问题名称" >
+            <el-table-column prop="FProbType" label="问题类型" >
             </el-table-column>
-            <el-table-column prop="status" label="状态" >
+            <el-table-column prop="FStatusName" label="审核状态" >
             </el-table-column>
-            <el-table-column label="操作" width="180">
+            <el-table-column label="操作" width="200">
                 <template scope="scope">
+                    <el-button size="small"
+                               @click="handleEdit(scope.$index, scope.row)">上传</el-button>
                     <el-button size="small"
                             @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                     <el-button size="small" type="danger"
@@ -69,7 +104,6 @@
 <script>
     import vProblemForm from './ProblemForm.vue';
     import mapSelect from './MapSelect.vue';
-    import Axios from 'axios';
     import _ from 'lodash';
 
     export default {
@@ -79,6 +113,7 @@
         },
         data() {
             return {
+                msg: '',
                 url: './static/vuetable.json',
                 position: '',
                 tableData: [],
@@ -86,51 +121,38 @@
                 multipleSelection: [],
                 select_cate: '',
                 select_years: '',
-                select_word: '',
+                select_mouths: '',
                 select_adcd: '',
-                select_area: '',
+                select_edge: '',
                 select_problem_num: '',
                 select_problem: '',
+                select_status: '',
+                select_cttatus: '',
                 del_list: [],
                 is_search: false,
                 years: [2018,2017,2016],
+                mouths: [1,2,3,4,5,6,7,8,9,10,11,12],
                 adlist: [],
-                problems: [
-                    {
-                        id: 1,
-                        label: '乱堆乱放'
-                    }
-                ],
-
+                proOptions: [],
+                edgeOptions: [],
+                staOptions: [],
+                cstaOptions: [],
                 proAddShow: false,
                 mapSelectShow: false,
                 breadcrumb: []
             }
         },
         created(){
+            this.getAdcd();
+            this.getEdge();
             this.getData();
+            this.getProblemType();
+            this.getStatusData();
+            this.getChangeStatusData();
         },
         computed: {
             data(){
-                const self = this;
-                // return self.tableData.filter(function(d){
-                //     let is_del = false;
-                //     for (let i = 0; i < self.del_list.length; i++) {
-                //         if(d.name === self.del_list[i].name){
-                //             is_del = true;
-                //             break;
-                //         }
-                //     }
-                //     if(!is_del){
-                //         if(d.adcd.indexOf(self.select_adcd) > -1 &&
-                //             (d.problemNum.indexOf(self.select_problem_num) > -1 ||
-                //             d.problemName.indexOf(self.select_problem) > -1)
-                //         ){
-                //             return d;
-                //         }
-                //     }
-                // })
-                return self.tableData
+                return this.tableData
             }
         },
         methods: {
@@ -139,57 +161,12 @@
                 this.getData();
             },
             getBreadcrumb(){
-                let list = []
-                // console.log(this.$route.query);
-                let first = this.$route.query.first;
-                let second = this.$route.query.second;
-                let third = this.$route.query.third;
-                if (first || first === 'Problem') {
-                    list.push('问题点位');
-                }
-                if (second || second === 'Province') {
-                    list.push('省级点位');
-                } else if (second || second === 'City') {
-                    list.push('市级点位');
-                } else if (second || second === 'City') {
-                    list.push('县级自查自纠点位');
-                }
-
-                switch (third) {
-                    case 'jj':
-                        list.push('椒江区');
-                        break;
-                    case 'hy':
-                        list.push('黄岩区');
-                        break;
-                    case 'lq':
-                        list.push('路桥区');
-                        break;
-                    case 'lh':
-                        list.push('临海市');
-                        break;
-                    case 'wl':
-                        list.push('温岭市');
-                        break;
-                    case 'yh':
-                        list.push('玉环市');
-                        break;
-                    case 'xj':
-                        list.push('仙居县');
-                        break;
-                    case 'sm':
-                        list.push('三门县');
-                        break;
-                    case 'tt':
-                        list.push('天台县');
-                        break;
-                }
-                // console.log(list)
-                this.breadcrumb = [].concat(list);
+                let blist = JSON.parse(sessionStorage.getItem('breadcrumb'));
+                this.breadcrumb = [].concat(blist);
             },
             getAdcd() {
                 let self = this;
-                Axios.get('Common/GetAgencyList')
+                this.$axios.get('Common/GetAgencyList')
                     .then(function (response) {
                         let data = response.data;
                         let adcdlist = [];
@@ -208,23 +185,135 @@
                         });
                     });
             },
+            getEdge() {
+                let self = this;
+                this.$axios.get('Common/GetEnumList', {
+                    params: {
+                        EnumType: '四边'
+                    }
+                })
+                    .then(function (response) {
+                        let data = response.data;
+                        let list = [];
+                        _.each(data.object, (obj) => {
+                            list.push({
+                                value: obj.FValue,
+                                label: obj.FName
+                            })
+                        })
+                        self.edgeOptions = [].concat(list);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        self.$alert(error.message, '温馨提示', {
+                            confirmButtonText: '确定'
+                        });
+                    });
+            },
+            getStatusData() {
+                let self = this;
+                this.$axios.get('Common/GetEnumList', {
+                    params: {
+                        EnumType: '审核状态'
+                    }
+                })
+                    .then(function (response) {
+                        let data = response.data;
+                        let list = [];
+                        _.each(data.object, (obj) => {
+                            list.push({
+                                value: obj.FValue,
+                                label: obj.FName
+                            })
+                        })
+                        self.staOptions = [].concat(list);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        self.$alert(error.message, '温馨提示', {
+                            confirmButtonText: '确定'
+                        });
+                    });
+            },
+            getChangeStatusData() {
+                let self = this;
+                this.$axios.get('Common/GetEnumList', {
+                    params: {
+                        EnumType: '整改状态'
+                    }
+                })
+                    .then(function (response) {
+                        let data = response.data;
+                        let list = [];
+                        _.each(data.object, (obj) => {
+                            list.push({
+                                value: obj.FValue,
+                                label: obj.FName
+                            })
+                        })
+                        self.cstaOptions = [].concat(list);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        self.$alert(error.message, '温馨提示', {
+                            confirmButtonText: '确定'
+                        });
+                    });
+            },
+            getProblemType() {
+                let self = this;
+                this.$axios.get('Common/GetEnumList', {
+                    params: {
+                        EnumType: '问题类型'
+                    }
+                })
+                    .then(response => {
+                        let data = response.data;
+                        let list = [];
+                        _.each(data.object, (obj) => {
+                            list.push({
+                                value: obj.FValue,
+                                label: obj.FName
+                            })
+                        })
+                        self.proOptions = [].concat(list);
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        self.$alert(error.message, '温馨提示', {
+                            confirmButtonText: '确定'
+                        });
+                    });
+            },
             getData(){
                 let self = this;
-                if(process.env.NODE_ENV === 'development'){
-                    self.url = '/ms/table/list';
-                };
-                var instance = self.$axios.create({
-                    baseURL: 'http://localhost:8080/',
-                    timeout: 1000,
-                    headers: {'X-Custom-Header': 'foobar'}
-                });
-                instance.post(self.url, {page:self.cur_page}).then((res) => {
-                    // self.tableData = res.data.list;
-                    self.tableData = list;
+                this.$axios.post('LoanApply/GetSJList', {
+                    curr: this.cur_page,
+                    pageSize: 15,
+                    FAgencyValue: this.select_adcd,
+                    FBillTypeID: '1000011',
+                    FBillNo: this.select_problem_num,
+                    FStatus: this.select_status,
+                    FYear: this.select_years,
+                    FMonth: this.select_mouths,
+                    FChangeStatus: this.select_cttatus,
+                    strSortFiled: '',
+                    strSortType: ''
                 })
+                    .then(response => {
+                        let data = response.data;
+                        self.tableData = data.object
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        self.$alert(error.message, '温馨提示', {
+                            confirmButtonText: '确定'
+                        });
+                    });
             },
             search(){
                 this.is_search = true;
+                this.getData();
             },
             formatter(row, column) {
                 return row.address;
@@ -260,104 +349,25 @@
             },
             setPosition(msg) {
                 this.position = msg.lng + ',' + msg.lat;
+            },
+            getStatus (urlStr) {
+                var urlStrArr = urlStr.split('/')
+                return urlStrArr[urlStrArr.length - 1]
             }
-        },
-        created() {
-            this.getAdcd();
         },
         mounted() {
             this.getBreadcrumb();
         },
         watch: {
             '$route' (to, from) {
+                //刷新参数放到这里里面去触发就可以刷新相同界面了
+                console.log(to);
+                console.log(from);
+                this.getStatus(this.$route.path);
                 this.getBreadcrumb();
             }
         }
     }
-
-    const list = [
-        {
-            id: 1,
-            adnm: '椒江区',
-            problemNum: 'jj001',
-            lineName: 'G15沈海',
-            mileage: '椒江大桥下',
-            problemName: '乱堆乱放',
-            status: '审核通过'
-        },
-        {
-            id: 2,
-            adnm: '椒江区',
-            problemNum: 'jj002',
-            lineName: 'G15沈海',
-            mileage: '椒江大桥下',
-            problemName: '乱堆乱放',
-            status: '审核通过'
-        },
-        {
-            id: 1,
-            adnm: '椒江区',
-            problemNum: 'jj003',
-            lineName: 'G15沈海',
-            mileage: '椒江大桥下',
-            problemName: '乱堆乱放',
-            status: '审核通过'
-        },
-        {
-            id: 1,
-            adnm: '椒江区',
-            problemNum: 'jj004',
-            lineName: 'G15沈海',
-            mileage: '椒江大桥下',
-            problemName: '乱堆乱放',
-            status: '审核通过'
-        },
-        {
-            id: 1,
-            adnm: '椒江区',
-            problemNum: 'jj005',
-            lineName: 'G15沈海',
-            mileage: '椒江大桥下',
-            problemName: '乱堆乱放',
-            status: '审核通过'
-        },
-        {
-            id: 1,
-            adnm: '椒江区',
-            problemNum: 'jj006',
-            lineName: 'G15沈海',
-            mileage: '椒江大桥下',
-            problemName: '乱堆乱放',
-            status: '审核通过'
-        },
-        {
-            id: 1,
-            adnm: '椒江区',
-            problemNum: 'jj007',
-            lineName: 'G15沈海',
-            mileage: '椒江大桥下',
-            problemName: '乱堆乱放',
-            status: '审核通过'
-        },
-        {
-            id: 1,
-            adnm: '椒江区',
-            problemNum: 'jj001',
-            lineName: 'G15沈海',
-            mileage: '椒江大桥下',
-            problemName: '乱堆乱放',
-            status: '审核通过'
-        },
-        {
-            id: 1,
-            adnm: '椒江区',
-            problemNum: 'jj001',
-            lineName: 'G15沈海',
-            mileage: '椒江大桥下',
-            problemName: '乱堆乱放',
-            status: '审核通过'
-        },
-    ]
 </script>
 
 <style scoped>

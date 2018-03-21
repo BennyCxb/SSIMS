@@ -11,9 +11,6 @@ Vue.use(ElementUI);
 // 引入cookie
 import {setCookie, getCookie} from 'assets/js/cookie.js';
 
-
-
-
 // 引入vue-amap
 import VueAMap from 'vue-amap';
 Vue.use(VueAMap);
@@ -33,9 +30,10 @@ VueAMap.initAMapApiLoader({
 
 
 Vue.prototype.$axios = axios;
-axios.defaults.baseURL = 'http://tzsgyc.iok.la/api/';
+// Vue.prototype.$axios.defaults.baseURL = 'http://localhost:8088/api/';
+Vue.prototype.$axios.defaults.baseURL = 'http://tzsgyc.iok.la/api/';
 // 添加请求拦截器
-axios.interceptors.request.use(function (config) {
+Vue.prototype.$axios.interceptors.request.use(function (config) {
     // 在发送请求之前做些什么
     if (getCookie('TZManage')) {
         config.headers.common['Authorization'] = "Bearer " + getCookie('TZManage');

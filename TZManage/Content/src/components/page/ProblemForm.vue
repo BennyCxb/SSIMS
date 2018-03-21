@@ -3,6 +3,29 @@
         <el-form :model="formInline" :rules="rules" ref="ruleForm" class="demo-form-inline demo-ruleForm">
             <el-row>
                 <el-col :span="12">
+                    <el-form-item label="年度月份" :label-width="formLabelWidth" prop="month">
+                        <el-date-picker
+                            v-model="formInline.month"
+                            type="month"
+                            placeholder="选择年度月份">
+                        </el-date-picker>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="四边" :label-width="formLabelWidth" prop="adcd">
+                        <el-select v-model="formInline.edge">
+                            <el-option
+                                v-for="item in edgeOptions"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="12">
                     <el-form-item label="行政区划" :label-width="formLabelWidth" prop="adcd">
                         <el-select v-model="formInline.adcd">
                             <el-option
@@ -22,22 +45,6 @@
             </el-row>
             <el-row>
                 <el-col :span="12">
-                    <el-form-item label="年度月份" :label-width="formLabelWidth" prop="month">
-                        <el-date-picker
-                            v-model="formInline.month"
-                            type="month"
-                            placeholder="选择年度月份">
-                        </el-date-picker>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="问题编号" :label-width="formLabelWidth" prop="proNum">
-                        <el-input v-model="formInline.proNum" auto-complete="off" placeholder="请输入问题编号"></el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="12">
                     <el-form-item label="线路名称" :label-width="formLabelWidth" prop="lineName">
                         <el-input v-model="formInline.lineName" auto-complete="off" placeholder="请输入线路名称"></el-input>
                     </el-form-item>
@@ -50,8 +57,9 @@
             </el-row>
             <el-row>
                 <el-col :span="12">
-                    <el-form-item label="问题描述" :label-width="formLabelWidth">
-                        <el-input v-model="formInline.proDescribe" auto-complete="off" placeholder="请输入问题描述"></el-input>
+                    <el-form-item label="定位信息" :label-width="formLabelWidth">
+                        <el-input v-model="sposition" auto-complete="off" @focus="openMap"
+                                  placeholder="点击选择定位"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
@@ -65,7 +73,7 @@
                     <el-form-item label="问题分类" :label-width="formLabelWidth">
                         <el-select v-model="formInline.proType" placeholder="请选择问题分类">
                             <el-option
-                                v-for="(item, i) in proOption"
+                                v-for="(item, i) in proOptions"
                                 :key="i"
                                 :label="item.label"
                                 :value="item.value">
@@ -73,11 +81,33 @@
                         </el-select>
                     </el-form-item>
                 </el-col>
-                <el-col :span="12">
-                    <el-form-item label="定位信息" :label-width="formLabelWidth">
-                        <el-input v-model="sposition" auto-complete="off" @focus="openMap"
-                                  placeholder="点击选择定位"></el-input>
-                        <!--<el-button type="primary" @click="openMap">主要按钮</el-button>-->
+            </el-row>
+            <!--<el-row>-->
+                <!--<el-col :span="24">-->
+                    <!--<el-form-item label="整治前照片" :label-width="formLabelWidth">-->
+                        <!--<el-upload-->
+                            <!--action="https://jsonplaceholder.typicode.com/posts/"-->
+                            <!--list-type="picture-card"-->
+                            <!--:on-preview="handlePictureCardPreview"-->
+                            <!--:on-remove="handleRemove"-->
+                            <!--:auto-upload="false">-->
+                            <!--<i class="el-icon-plus"></i>-->
+                        <!--</el-upload>-->
+                        <!--<el-dialog :visible.sync="dialogVisible">-->
+                            <!--<img width="100%" :src="dialogImageUrl" alt="">-->
+                        <!--</el-dialog>-->
+                    <!--</el-form-item>-->
+                <!--</el-col>-->
+            <!--</el-row>-->
+
+            <el-row>
+                <el-col :span="24">
+                    <el-form-item label="问题描述" :label-width="formLabelWidth">
+                        <el-input v-model="formInline.proDescribe"
+                                  auto-complete="off"
+                                  type="textarea"
+                                  :rows="2"
+                                  placeholder="请输入问题描述"></el-input>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -95,7 +125,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="handleClose">取 消</el-button>
-            <el-button type="primary" @click="handleClose">确 定</el-button>
+            <el-button type="primary" @click="submit()">确 定</el-button>
         </div>
     </el-dialog>
 </template>
@@ -112,6 +142,7 @@
                 innerVisible: false,
                 formInline: {
                     adcd: '331002',
+                    edge: '',
                     town: '',
                     year: '',
                     month: formatDate(new Date(), 'yyyy-MM'),
@@ -121,34 +152,12 @@
                     mileage: '',
                     proDescribe: '',
                     duration: '',
-                    proType: '0'
+                    proType: 1
                 },
                 formLabelWidth: '120px',
-                adcdOptions: [{
-                    value: '331002',
-                    label: '椒江区'
-                }, {
-                    value: 'fankui',
-                    label: '路桥区'
-                }, {
-                    value: 'xiaolv',
-                    label: '黄岩区'
-                }
-                ],
-                proOption: [
-                    {
-                        value: '0',
-                        label: '乱搭乱建'
-                    },
-                    {
-                        value: '1',
-                        label: '乱堆乱放'
-                    },
-                    {
-                        value: '2',
-                        label: '废品垃圾'
-                    }
-                ],
+                adcdOptions: [],
+                edgeOptions: [],
+                proOptions: [],
                 rules: {
                     adcd: [
                         {required: true, message: '请选择行政区划', trigger: 'change'}
@@ -168,7 +177,9 @@
                     duration: [
                         {required: true, message: '请输入整治时限', trigger: 'blur'}
                     ]
-                }
+                },
+                dialogImageUrl: '',
+                dialogVisible: false
             }
         },
         methods: {
@@ -199,11 +210,36 @@
                         });
                     });
             },
+            getEdge() {
+                let self = this;
+                Axios.get('Common/GetEnumList', {
+                    params: {
+                        EnumType: '四边'
+                    }
+                })
+                    .then(function (response) {
+                        let data = response.data;
+                        let list = [];
+                        _.each(data.object, (obj) => {
+                            list.push({
+                                value: obj.FValue,
+                                label: obj.FName
+                            })
+                        })
+                        self.edgeOptions = [].concat(list);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        self.$alert(error.message, '温馨提示', {
+                            confirmButtonText: '确定'
+                        });
+                    });
+            },
             getProblemType() {
                 let self = this;
                 Axios.get('Common/GetEnumList', {
                     params: {
-                        FEnumTypeID: 4
+                        EnumType: '问题类型'
                     }
                 })
                     .then(function (response) {
@@ -215,6 +251,7 @@
                                 label: obj.FName
                             })
                         })
+                        self.proOptions = [].concat(ptypelist);
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -223,13 +260,61 @@
                         });
                     });
             },
-            save() {
-                Axios.post('LoanApply/SaveSJApply', {})
+            handleRemove(file, fileList) {
+                console.log(file, fileList);
+            },
+            handlePictureCardPreview(file) {
+                this.dialogImageUrl = file.url;
+                this.dialogVisible = true;
+            },
+            submit() {
+                let self = this;
+                console.log({
+                    FBillTypeID: '1000011',
+                    FAgencyValue: self.formInline.adcd,
+                    FPerimeter: self.formInline.edge,
+                    FYear: Number(self.formInline.month.substring(0, 4)),
+                    FMonth: Number(self.formInline.month.substring(5)),
+                    FLineName: self.formInline.lineName,
+                    FMileage: self.formInline.mileage,
+                    FProbTypeID: self.formInline.proType,
+                    FProbDescribe: self.formInline.proDescribe,
+                    FGPS: self.sposition
+                })
+                Axios.post('LoanApply/SaveSJApply', {
+                    FBillTypeID: '100011',
+                    FAgencyValue: self.formInline.adcd,
+                    FPerimeter: self.formInline.edge,
+                    FYear: Number(self.formInline.month.substring(0, 4)),
+                    FMonth: Number(self.formInline.month.substring(5)),
+                    FLineName: self.formInline.lineName,
+                    FMileage: self.formInline.mileage,
+                    FProbTypeID: self.formInline.proType,
+                    FProbDescribe: self.formInline.proDescribe,
+                    FGPS: self.sposition
+                })
+                    .then(response => {
+                        let data = response.data;
+                        if (data.code === 1) {
+                            self.handleClose()
+                        } else {
+                            self.$alert(data.message, '温馨提示', {
+                                confirmButtonText: '确定'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        self.$alert(error.message, '温馨提示', {
+                            confirmButtonText: '确定'
+                        });
+                    });
             }
         },
         props: ['formShow', 'sposition'],
         created() {
             this.getAdcd();
+            this.getEdge();
             this.getProblemType();
         }
     }
