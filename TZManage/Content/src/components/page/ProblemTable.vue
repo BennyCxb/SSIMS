@@ -54,7 +54,7 @@
             <el-button type="primary" icon="search" @click="search">搜索</el-button>
             <!--<el-button type="primary" icon="plus" @click="search">添加项目</el-button>-->
             <!--<el-button type="primary" icon="printer" @click="search">数据导出</el-button>-->
-            <el-button type="primary" icon="upload2" @click="addProblem">上报问题</el-button>
+            <el-button type="primary" icon="plus" @click="addProblem">新增问题</el-button>
             <!--<router-link :to="'ProblemAdd'">-->
                 <!--<el-button type="primary" icon="upload2">上报问题</el-button>-->
             <!--</router-link>-->
@@ -65,9 +65,9 @@
         </div>
         <el-table :data="data" border style="width: 100%" ref="multipleTable" @selection-change="handleSelectionChange" stripe>
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="FAgencyName" label="行政区划" sortable>
+            <el-table-column prop="FAgencyName" label="行政区划">
             </el-table-column>
-            <el-table-column prop="FBillNo" label="问题编号">
+            <el-table-column prop="FBillNo" label="问题编号" sortable>
             </el-table-column>
             <el-table-column prop="FLineName" label="线路名称" >
             </el-table-column>
@@ -75,7 +75,7 @@
             </el-table-column>
             <el-table-column prop="FProbType" label="问题类型" >
             </el-table-column>
-            <el-table-column prop="FStatusName" label="审核状态" >
+            <el-table-column prop="FStatusName" label="审核状态" sortable>
             </el-table-column>
             <el-table-column label="操作" width="200">
                 <template scope="scope">
@@ -165,13 +165,22 @@
                 var urlStrArr = urlStr.split('/')
                 return urlStrArr[urlStrArr.length - 1]
             },
+            /**
+             * 获取BiilTypeID
+             */
             getBillTypeId() {
                 this.billTypeID = this.$route.params.btid
             },
+            /**
+             * 获取面包屑
+             */
             getBreadcrumb(){
                 let blist = JSON.parse(sessionStorage.getItem('breadcrumb'));
                 this.breadcrumb = [].concat(blist);
             },
+            /**
+             * 获取行政区划
+             */
             getAdcd() {
                 let self = this;
                 this.$axios.get('Common/GetAgencyList')
@@ -193,6 +202,9 @@
                         });
                     });
             },
+            /**
+             * 获取四边
+             */
             getEdge() {
                 let self = this;
                 this.$axios.get('Common/GetEnumList', {
@@ -216,6 +228,9 @@
                         this.$message.error(error.message);
                     });
             },
+            /**
+             * 获取审核状态
+             */
             getStatusData() {
                 let self = this;
                 this.$axios.get('Common/GetEnumList', {
@@ -239,6 +254,9 @@
                         this.$message.error(error.message);
                     });
             },
+            /**
+             * 获取整改状态
+             */
             getChangeStatusData() {
                 let self = this;
                 this.$axios.get('Common/GetEnumList', {
@@ -262,6 +280,9 @@
                         this.$message.error(error.message);
                     });
             },
+            /**
+             * 获取问题类型
+             */
             getProblemType() {
                 let self = this;
                 this.$axios.get('Common/GetEnumList', {
@@ -285,6 +306,9 @@
                         this.$message.error(error.message);
                     });
             },
+            /**
+             * 获取列表
+             */
             getData(){
                 let self = this;
                 this.$axios.post('LoanApply/GetSJList', {
@@ -309,6 +333,9 @@
                         this.$message.error(error.message);
                     });
             },
+            /**
+             * 搜索事件
+             */
             search(){
                 this.is_search = true;
                 this.getData();
@@ -319,41 +346,83 @@
             // filterTag(value, row) {
             //     return row.tag === value;
             // },
+
+            /**
+             * 修改信息触发
+             */
             handleEdit(index, row) {
                 this.editProblem(row.FID)
             },
+            /**
+             * 删除信息触发
+             */
             handleDelete(index, row) {
-                this.$message.error('删除第'+(index+1)+'行');
+                let self = this
+                this.$confirm('确认删除？')
+                    .then(_ => {
+                        self.$axios.get('LoanApply/DeleteApply', {
+                            params: {
+                                FID: row.FID
+                            }
+                        })
+                            .then(function (response) {
+                                let data = response.data;
+                                self.$message.error('删除成功！');
+                                self.getData();
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                                self.$alert(error.message, '温馨提示', {
+                                    confirmButtonText: '确定'
+                                });
+                            });
+                    })
+                    .catch(_ => {});
             },
-            delAll(){
-                const self = this,
-                    length = self.multipleSelection.length;
-                let str = '';
-                self.del_list = self.del_list.concat(self.multipleSelection);
-                for (let i = 0; i < length; i++) {
-                    str += self.multipleSelection[i].name + ' ';
-                }
-                self.$message.error('删除了'+str);
-                self.multipleSelection = [];
-            },
+            // delAll(){
+            //     const self = this,
+            //         length = self.multipleSelection.length;
+            //     let str = '';
+            //     self.del_list = self.del_list.concat(self.multipleSelection);
+            //     for (let i = 0; i < length; i++) {
+            //         str += self.multipleSelection[i].name + ' ';
+            //     }
+            //     self.$message.error('删除了'+str);
+            //     self.multipleSelection = [];
+            // },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
+            /**
+             * 新增问题点位
+             */
             addProblem() {
                 this.proAddShow = true
                 this.editFid = ''
             },
+            /**
+             * 修改问题点位
+             */
             editProblem(fid) {
                 this.proAddShow = true
                 this.editFid = fid
             },
+            /**
+             * 关闭问题信息框
+             */
             closePro: function (msg) {
                 this.proAddShow = msg;
                 this.getData();
             },
+            /**
+             * 关闭地图选择框
+             */
             closeMap: function (msg) {
                 this.mapSelectShow = msg;
             },
+            /**
+             * 设置定位信息
+             */
             setPosition(msg) {
                 this.position = msg.lng + ',' + msg.lat;
             },
