@@ -36,7 +36,7 @@ namespace BT.Manage.Model
             /// 附件类型名
             /// </summary>
             [Display(Name = @"附件类型名")]
-            public int? FName{ get; set; }
+            public string FName{ get; set; }
             /// <summary>
             /// 文件类型配置
             /// </summary>

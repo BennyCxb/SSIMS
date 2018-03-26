@@ -138,5 +138,17 @@ namespace BT.Manage.Model
             /// </summary>
             [Display(Name = @"修改用户")]
             public System.DateTime? FModifyTime{ get; set; }
+
+        /// <summary>
+        /// 乡镇街道
+        /// </summary>
+        [Display(Name =@"乡镇街道")]
+        public string FTwon { get; set; }
+
+        /// <summary>
+        /// 备注
+        /// </summary>
+        [Display(Name =@"备注")]
+        public string FRemark { get; set; }
     }
 }

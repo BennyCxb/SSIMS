@@ -49,6 +49,9 @@
     <Reference Include="BT.Manage.Tools">
       <HintPath>..\packages\BT.Manage.Tools.dll</HintPath>
     </Reference>
+    <Reference Include="BT.Manage.Verification">
+      <HintPath>..\..\..\..\Frame\BTFrame\packages\BT.Manage.Verification.1.0.0.15\lib\net45\BT.Manage.Verification.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Qiniu.7.3.1.1\lib\Net40\Newtonsoft.Json.dll</HintPath>

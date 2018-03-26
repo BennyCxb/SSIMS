@@ -15,6 +15,7 @@ using BT.Manage.Core;
 using FLow;
 using TZManageAPI.Common;
 using BT.Manage.Tools.Utils;
+using BT.Manage.Verification;
 
 namespace TZManageAPI.Controllers
 {
@@ -30,6 +31,7 @@ namespace TZManageAPI.Controllers
         /// <param name="obj"></param>
         /// <returns></returns>
         [HttpPost]
+        [BtLog]
         public Result GetSJList([FromBody]JObject obj)
         {
             Result result = new Result();
@@ -65,12 +67,40 @@ namespace TZManageAPI.Controllers
             return result;
         }
 
+
+        /// <summary>
+        /// 获取核准单实体
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [BtLog]
+        public Result GetApplyInfo(int FID)
+        {
+            Result result = new Result();
+            LoanApplyInfo applyInfo= ModelOpretion.FirstOrDefault<LoanApplyInfo>(FID);
+
+            if(applyInfo.FID>0)
+            {
+                result.code = 1;
+                result.@object = applyInfo;
+            }
+            else
+            {
+                result.code = 0;
+                result.message = "没有找到该问题！";
+            }
+            
+
+            return result;
+        }
+
         /// <summary>
         /// 保存省级问题表单
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPost]
+        [BtLog]
         public Result SaveSJApply([FromBody]LoanApplyInfo info)
         {
             Result result = new Result();
@@ -97,6 +127,7 @@ namespace TZManageAPI.Controllers
 
                     info.FModifyUserID = UserInfo.UserId;
                     info.FModifyTime = DateTime.Now;
+                    info.FAgencyName = ModelOpretion.FirstOrDefault<BaseAgencyInfo>(p => p.FValue == info.FAgencyValue).FName;
                     int k = info.SaveOnSubmit();
                     if (k > 0)
                     {
@@ -131,6 +162,37 @@ namespace TZManageAPI.Controllers
             return result;
         }
 
+        /// <summary>
+        /// 删除问题
+        /// </summary>
+        /// <param name="FID"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [BtLog]
+        public Result DeleteApply(int FID)
+        {
+            Result result = new Result();
+            result.code = 1;
+            LoanApplyInfo applyInfo = ModelOpretion.FirstOrDefault<LoanApplyInfo>(FID);
+            if (FID<=0)
+            {
+                result.code = 0;
+                result.message = "该问题不存在或已删除！";
+                return result;
+            }
+
+            if(applyInfo.FStatus.ToSafeInt32(0)!=0)
+            {
+                result.code = 0;
+                result.message = "当前状态不允许删除！";
+                return result;
+            }
+            
+            applyInfo.FIsDeleted = 1;
+            applyInfo.SaveOnSubmit();
+            result.code = 1;
+            return result;
+        }
 
         /// <summary>
         /// 省级问题提交
@@ -138,6 +200,7 @@ namespace TZManageAPI.Controllers
         /// <param name="flowModel"></param>
         /// <returns></returns>
         [HttpPost]
+        [BtLog]
         public Result SubmitSJApply([FromBody]FlowModel flowModel)
         {
             Result result = new Result();
@@ -147,6 +210,8 @@ namespace TZManageAPI.Controllers
 
             return result;
         }
-             
+        
+
+
     }
 }

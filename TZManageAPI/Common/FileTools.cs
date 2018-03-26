@@ -31,7 +31,8 @@ namespace TZManageAPI.Common
                     FFileName = fileName,
                     FIsQiNiu = 1,
                     FLoanID = FLoanID,
-                    FQiNiuKey = FQiNiuKey
+                    FQiNiuKey = FQiNiuKey,
+                    FAttachmentTypeID= AttachTypeID
                 };
                 
                 Result upLoadresult = UploadFiles.UploadFilesForQiNiu(file, FQiNiuKey);
