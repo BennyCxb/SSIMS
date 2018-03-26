@@ -22,7 +22,7 @@
                 type="month"
                 placeholder="选择月">
             </el-date-picker>
-            <el-select v-model="select_adcd" class="handle-select" placeholder="请选择" clearable>
+            <el-select v-model="select_adcd" class="handle-select" placeholder="行政区划" clearable>
                 <el-option
                     v-for="item in adlist"
                     :key="item.value"
@@ -54,18 +54,16 @@
             <el-button type="primary" icon="search" @click="search">搜索</el-button>
             <!--<el-button type="primary" icon="plus" @click="search">添加项目</el-button>-->
             <!--<el-button type="primary" icon="printer" @click="search">数据导出</el-button>-->
-            <el-button type="primary" icon="upload2" @click="proAddShow = true">上报问题</el-button>
+            <el-button type="primary" icon="upload2" @click="addProblem">上报问题</el-button>
             <!--<router-link :to="'ProblemAdd'">-->
                 <!--<el-button type="primary" icon="upload2">上报问题</el-button>-->
             <!--</router-link>-->
-
-
-            <vProblemForm :formShow="proAddShow" :sposition="position" @closeProAdd="closePro" @selectMap="closeMap"></vProblemForm>
+            <vProblemForm :fid="editFid" :billTypeId="billTypeID" :formShow="proAddShow" :sposition="position" @closeProAdd="closePro" @selectMap="closeMap"></vProblemForm>
             <map-select :mapShow="mapSelectShow" @selectMap="closeMap" @selectPosition="setPosition"></map-select>
 
             <!--<el-button type="primary" icon="" @click="search">整改完成</el-button>-->
         </div>
-        <el-table :data="data" border style="width: 100%" ref="multipleTable" @selection-change="handleSelectionChange">
+        <el-table :data="data" border style="width: 100%" ref="multipleTable" @selection-change="handleSelectionChange" stripe>
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="FAgencyName" label="行政区划" sortable>
             </el-table-column>
@@ -82,7 +80,7 @@
             <el-table-column label="操作" width="200">
                 <template scope="scope">
                     <el-button size="small"
-                               @click="handleEdit(scope.$index, scope.row)">上传</el-button>
+                               @click="handleEdit(scope.$index, scope.row)">照片</el-button>
                     <el-button size="small"
                             @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                     <el-button size="small" type="danger"
@@ -113,8 +111,8 @@
         },
         data() {
             return {
-                msg: '',
-                url: './static/vuetable.json',
+                editFid: '',
+                billTypeID: '',
                 position: '',
                 tableData: [],
                 cur_page: 1,
@@ -143,6 +141,9 @@
             }
         },
         created(){
+            this.getBillTypeId();
+            this.getBreadcrumb();
+
             this.getAdcd();
             this.getEdge();
             this.getData();
@@ -159,6 +160,13 @@
             handleCurrentChange(val){
                 this.cur_page = val;
                 this.getData();
+            },
+            getStatus (urlStr) {
+                var urlStrArr = urlStr.split('/')
+                return urlStrArr[urlStrArr.length - 1]
+            },
+            getBillTypeId() {
+                this.billTypeID = this.$route.params.btid
             },
             getBreadcrumb(){
                 let blist = JSON.parse(sessionStorage.getItem('breadcrumb'));
@@ -205,9 +213,7 @@
                     })
                     .catch(function (error) {
                         console.log(error);
-                        self.$alert(error.message, '温馨提示', {
-                            confirmButtonText: '确定'
-                        });
+                        this.$message.error(error.message);
                     });
             },
             getStatusData() {
@@ -230,9 +236,7 @@
                     })
                     .catch(function (error) {
                         console.log(error);
-                        self.$alert(error.message, '温馨提示', {
-                            confirmButtonText: '确定'
-                        });
+                        this.$message.error(error.message);
                     });
             },
             getChangeStatusData() {
@@ -255,9 +259,7 @@
                     })
                     .catch(function (error) {
                         console.log(error);
-                        self.$alert(error.message, '温馨提示', {
-                            confirmButtonText: '确定'
-                        });
+                        this.$message.error(error.message);
                     });
             },
             getProblemType() {
@@ -280,9 +282,7 @@
                     })
                     .catch(error => {
                         console.log(error);
-                        self.$alert(error.message, '温馨提示', {
-                            confirmButtonText: '确定'
-                        });
+                        this.$message.error(error.message);
                     });
             },
             getData(){
@@ -291,7 +291,7 @@
                     curr: this.cur_page,
                     pageSize: 15,
                     FAgencyValue: this.select_adcd,
-                    FBillTypeID: '1000011',
+                    FBillTypeID: this.billTypeID,
                     FBillNo: this.select_problem_num,
                     FStatus: this.select_status,
                     FYear: this.select_years,
@@ -306,9 +306,7 @@
                     })
                     .catch(error => {
                         console.log(error);
-                        self.$alert(error.message, '温馨提示', {
-                            confirmButtonText: '确定'
-                        });
+                        this.$message.error(error.message);
                     });
             },
             search(){
@@ -322,7 +320,7 @@
             //     return row.tag === value;
             // },
             handleEdit(index, row) {
-                this.$message('编辑第'+(index+1)+'行');
+                this.editProblem(row.FID)
             },
             handleDelete(index, row) {
                 this.$message.error('删除第'+(index+1)+'行');
@@ -341,8 +339,17 @@
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
+            addProblem() {
+                this.proAddShow = true
+                this.editFid = ''
+            },
+            editProblem(fid) {
+                this.proAddShow = true
+                this.editFid = fid
+            },
             closePro: function (msg) {
                 this.proAddShow = msg;
+                this.getData();
             },
             closeMap: function (msg) {
                 this.mapSelectShow = msg;
@@ -350,13 +357,9 @@
             setPosition(msg) {
                 this.position = msg.lng + ',' + msg.lat;
             },
-            getStatus (urlStr) {
-                var urlStrArr = urlStr.split('/')
-                return urlStrArr[urlStrArr.length - 1]
-            }
         },
         mounted() {
-            this.getBreadcrumb();
+
         },
         watch: {
             '$route' (to, from) {
@@ -364,6 +367,7 @@
                 console.log(to);
                 console.log(from);
                 this.getStatus(this.$route.path);
+                this.getBillTypeId();
                 this.getBreadcrumb();
             }
         }
