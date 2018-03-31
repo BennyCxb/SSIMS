@@ -29,6 +29,11 @@ namespace BLL
             string FBillTypeID = dy.FBillTypeID;
             string strSortFiled = dy.SortFiled;
             string strSortType = dy.SortType;
+            //四边
+            string FEdge = dy.FEdge;
+            //问题类型
+            string FProbType = dy.FProbType;
+
             #endregion
 
             #region sql
@@ -79,6 +84,17 @@ left join (select ev.FValue,ev.FName,et.FName as FTypeName from t_Base_EnumValue
             {
                 qu.Where(@" a.FChangeStatus=@FChangeStatus ", new { FChangeStatus = FChangeStatus });
             }
+            //四边
+            if(FEdge.ToSafeInt32(-1)>-1)
+            {
+                qu.Where(@" a.FPerimeter=@FPerimeter ", new { FPerimeter = FEdge });
+            }
+            //问题类型
+            if(FProbType.ToSafeInt32(-1)>-1)
+            {
+                qu.Where(@" a.FProbTypeID=@FProbTypeID ",new { FProbTypeID= FProbType });
+            }
+
             #endregion
 
             #region 排序

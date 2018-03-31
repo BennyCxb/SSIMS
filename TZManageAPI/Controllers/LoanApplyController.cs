@@ -117,22 +117,37 @@ namespace TZManageAPI.Controllers
                 //修改
                 if (info.FID > 0)
                 {
+                    LoanApplyInfo apply= ModelOpretion.FirstOrDefault<LoanApplyInfo>(info.FID);
+
                     //只有保存状态可以修改数据
-                    if (info.FStatus.ToSafeInt32(0) != 0)
+                    if (apply.FStatus != 0)
                     {
                         result.code = 0;
                         result.message = "当前状态不允许修改！";
                         return result;
                     }
 
-                    info.FModifyUserID = UserInfo.UserId;
-                    info.FModifyTime = DateTime.Now;
-                    info.FAgencyName = ModelOpretion.FirstOrDefault<BaseAgencyInfo>(p => p.FValue == info.FAgencyValue).FName;
-                    int k = info.SaveOnSubmit();
+                    apply.FAgencyValue = info.FAgencyValue;
+                    apply.FAgencyName = ModelOpretion.FirstOrDefault<BaseAgencyInfo>(p => p.FValue == info.FAgencyValue).FName;
+                    apply.FGPS = info.FGPS;
+                    apply.FLineName = info.FLineName;
+                    apply.FMileage = info.FMileage;
+                    apply.FModifyTime = DateTime.Now;
+                    apply.FModifyUserID= UserInfo.UserId;
+                    apply.FMonth = info.FMonth;
+                    apply.FPerimeter = info.FPerimeter;
+                    apply.FProbDescribe = info.FProbDescribe;
+                    apply.FProbTypeID = info.FProbTypeID;
+                    apply.FRemark = info.FRemark;
+                    apply.FTwon = info.FTwon;
+                    apply.FYear = info.FYear;
+
+                    
+                    int k = apply.SaveOnSubmit();
                     if (k > 0)
                     {
                         result.code = 1;
-                        result.@object = info.FID;
+                        result.@object = apply.FID;
                         result.message = "修改成功";
                     }
                 }//新增
@@ -205,13 +220,41 @@ namespace TZManageAPI.Controllers
         {
             Result result = new Result();
             result.code = 0;
-
-            result= DoFlow.DoSubmit(flowModel);
+            flowModel.UserID= UserInfo.UserId;
+            result = DoFlow.DoSubmit(flowModel);
 
             return result;
         }
-        
 
+        /// <summary>
+        /// 省级问题审核
+        /// </summary>
+        /// <param name="flowModel"></param>
+        /// <returns></returns>
+        public Result AdoptSJApply([FromBody]FlowModel flowModel)
+        {
+            Result result = new Result();
+            result.code = 0;
+            flowModel.UserID = UserInfo.UserId;
+            result = DoFlow.DoAdopt(flowModel);
+
+            return result;
+        }
+
+        /// <summary>
+        /// 省级问题驳回
+        /// </summary>
+        /// <param name="flowModel"></param>
+        /// <returns></returns>
+        public Result RejectSJApply([FromBody]FlowModel flowModel)
+        {
+            Result result = new Result();
+            result.code = 0;
+            flowModel.UserID = UserInfo.UserId;
+            result = DoFlow.DoReject(flowModel);
+
+            return result;
+        }
 
     }
 }
