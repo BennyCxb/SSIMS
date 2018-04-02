@@ -97,6 +97,16 @@ left join (select ev.FValue,ev.FName,et.FName as FTypeName from t_Base_EnumValue
 
             #endregion
 
+            #region 权限相关
+
+            if(userInfo.FLevel==3 || userInfo.FLevel==4)
+            {
+                qu.Where(@" a.FAgencyValue=@FAgencyValue    ", new { FAgencyValue = userInfo.FAgencyValue });
+            }
+
+            #endregion 
+
+
             #region 排序
             if (!string.IsNullOrEmpty(strSortFiled) && !string.IsNullOrEmpty(strSortType))
             {
@@ -115,6 +125,125 @@ left join (select ev.FValue,ev.FName,et.FName as FTypeName from t_Base_EnumValue
             DataTable dt1 = qu.Take(pageSize).Skip(pageIndex).ToDataTable();
             totalCount = qu.TotalCount;
             return dt1;
+        }
+
+
+        /// <summary>
+        /// 桥下利用空间等获取列表
+        /// </summary>
+        /// <param name="userInfo"></param>
+        /// <param name="dy"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="totalCount"></param>
+        /// <returns></returns>
+        public static DataTable GetQXApplyList(LoginDataDto userInfo, dynamic dy, int pageIndex, int pageSize, out int totalCount)
+        {
+
+            #region 查询参数
+            string FBillNo = dy.FBillNo;
+            string FAgencyValue = dy.FAgencyValue;
+            string FYear = dy.FYear;
+            string FMonth = dy.FMonth;
+            string FBillTypeID = dy.FBillTypeID;
+            string FProjectTypeID = dy.FProjectTypeID;
+            string strSortFiled = dy.SortFiled;
+            string strSortType = dy.SortType;
+
+            #endregion
+
+            #region sql
+            string sql = @"select a.FID,a.FBillNo,FAgencyName,a.FPorjectName,a.FMileage,a.FLength,es.FName as FProjectName
+                                from t_Loan_Apply a 
+                                left join 
+                                (select ev.FValue,ev.FName,et.FName as FTypeName from t_Base_EnumValue ev 
+					left join t_Base_EnumType et on et.FID=ev.FEnumTypeID ) es on es.FTypeName='项目类型' and es.FValue=a.FProjectTypeID
+";
+
+            var qu = ModelOpretion.PageData(sql);
+            qu.Where(" isnull(a.FIsDeleted,0)=0 and a.FBillTypeID=@FBillTypeID ", new { FBillTypeID = FBillTypeID });
+
+            #endregion
+
+            #region 查询条件
+            //单据编号
+            if (!string.IsNullOrWhiteSpace(FBillNo))
+            {
+                qu.Where(@" a.FBillNo Like '%'+@FBillNo+'%' ", new { FBillNo = FBillNo });
+            }
+            //行政区划
+            if (!string.IsNullOrWhiteSpace(FAgencyValue))
+            {
+                qu.Where(@" a.FAgencyValue=@FAgencyValue ", new { FAgencyValue = FAgencyValue });
+            }
+            //年
+            if (!string.IsNullOrWhiteSpace(FYear))
+            {
+                qu.Where(@" a.FYear=@FYear ", new { FYear = FYear });
+            }
+            //月
+            if (!string.IsNullOrWhiteSpace(FMonth))
+            {
+                qu.Where(@" a.FMonth=@FMonth ", new { FMonth = FMonth });
+            }
+            //项目类型
+            if(!string.IsNullOrWhiteSpace(FProjectTypeID))
+            {
+                qu.Where(@" a.FProjectTypeID=@FProjectTypeID ", new { FProjectTypeID = FProjectTypeID });
+            }
+
+            #endregion
+
+            #region 权限相关
+
+            if (userInfo.FLevel == 3 || userInfo.FLevel == 4)
+            {
+                qu.Where(@" a.FAgencyValue=@FAgencyValue    ", new { FAgencyValue = userInfo.FAgencyValue });
+            }
+
+            #endregion 
+
+
+            #region 排序
+            if (!string.IsNullOrEmpty(strSortFiled) && !string.IsNullOrEmpty(strSortType))
+            {
+                if (strSortType.ToLower() == "desc")
+                { qu.ThenDESC("a." + strSortFiled); }
+                else
+                { qu.ThenASC("a." + strSortFiled); }
+            }
+            else
+            {
+                qu.ThenDESC("a.FID");
+            }
+            #endregion
+
+            totalCount = qu.TotalCount;
+            DataTable dt1 = qu.Take(pageSize).Skip(pageIndex).ToDataTable();
+            totalCount = qu.TotalCount;
+            return dt1;
+        }
+
+
+
+        /// <summary>
+        /// 获取审核情况列表
+        /// </summary>
+        /// <param name="FLoanID"></param>
+        /// <param name="FBillTypeID"></param>
+        /// <returns></returns>
+        public static DataTable GetCheckList(int FLoanID,int FBillTypeID)
+        {
+            DataTable dt = ModelOpretion.SearchDataRetunDataTable(@" 
+                                                select c.FLevelName,c.FRemark,CONVERT(nvarchar(32),c.FAddTime,120) FAddTime,u.FName 
+                                        from t_check_Apply c
+                                        left join t_sys_Users u on u.FID=c.FAddUserID
+                                        where FBillID=@FLoanID and FBillTypeID=@FBillTypeID
+                                        order by FAddTime asc
+        ", new { FLoanID= FLoanID, FBillTypeID= FBillTypeID });
+
+            return dt;
+
         }
 
     }

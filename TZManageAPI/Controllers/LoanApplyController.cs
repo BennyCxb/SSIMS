@@ -169,9 +169,9 @@ namespace TZManageAPI.Controllers
             }
             catch(Exception ex)
             {
-                LogService.Default.Fatal("保存省级问题表单出错：",ex.Message,ex);
+                LogService.Default.Fatal("保存问题表单出错：",ex.Message,ex);
                 result.code = 0;
-                result.message = "保存省级问题表单出错";
+                result.message = "保存问题表单出错";
             }
 
             return result;
@@ -231,6 +231,8 @@ namespace TZManageAPI.Controllers
         /// </summary>
         /// <param name="flowModel"></param>
         /// <returns></returns>
+        [HttpPost]
+        [BtLog]
         public Result AdoptSJApply([FromBody]FlowModel flowModel)
         {
             Result result = new Result();
@@ -246,12 +248,177 @@ namespace TZManageAPI.Controllers
         /// </summary>
         /// <param name="flowModel"></param>
         /// <returns></returns>
+        [HttpPost]
+        [BtLog]
         public Result RejectSJApply([FromBody]FlowModel flowModel)
         {
             Result result = new Result();
             result.code = 0;
             flowModel.UserID = UserInfo.UserId;
             result = DoFlow.DoReject(flowModel);
+
+            return result;
+        }
+
+        /// <summary>
+        /// 获取审核情况列表
+        /// </summary>
+        /// <param name="FLoanID">问题主键ID</param>
+        /// <param name="FBillTypeID">单据类型</param>
+        /// <returns></returns>
+        [HttpGet]
+        [BtLog]
+        public Result GetCheckList(int FLoanID,int FBillTypeID)
+        {
+            Result result = new Result();
+            result.code = 0;
+
+            try
+            {
+                DataTable dt = LoanApplyBll.GetCheckList(FLoanID, FBillTypeID);
+                result.code = 1;
+                result.@object = dt;
+            }
+            catch(Exception ex)
+            {
+                LogService.Default.Fatal(@"获取审核情况错误",ex.Message,ex);
+                result.code = 0;
+                result.message = string.Format("获取审核情况错误");
+            }
+
+            return result;
+
+        }
+
+
+        /// <summary>
+        /// 获取桥下利用空间等列表
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [BtLog]
+        public Result GetQXList([FromBody]JObject obj)
+        {
+            Result result = new Result();
+            result.code = 0;
+            dynamic dy = obj;
+            int curr = dy.curr;
+            int pageSize = dy.pageSize;
+            int totalCount = 0;
+
+            if (curr < 0 || pageSize < 0)
+            {
+                result = new Result()
+                {
+                    code = 0,
+                    message = "分页参数配置错误"
+                };
+            }
+            try
+            {
+                DataTable dt = LoanApplyBll.GetQXApplyList(UserInfo, dy, curr, pageSize, out totalCount);
+
+                result.code = 1;
+                result.@object = dt;
+                result.page = new page(curr, pageSize, totalCount);
+            }
+            catch (Exception ex)
+            {
+                LogService.Default.Fatal("获取列表出错", ex.Message, ex);
+                result.code = 0;
+                result.message = "获取列表出错";
+            }
+
+            return result;
+        }
+
+
+
+        /// <summary>
+        /// 保存桥下利用空间等表单
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [BtLog]
+        public Result SaveQXApply([FromBody]LoanApplyInfo info)
+        {
+            Result result = new Result();
+            result.code = 0;
+
+            try
+            {
+                //修改
+                if (info.FID > 0)
+                {
+                    LoanApplyInfo apply = ModelOpretion.FirstOrDefault<LoanApplyInfo>(info.FID);
+
+                    //只有保存状态可以修改数据
+                    if (apply.FStatus != 0)
+                    {
+                        result.code = 0;
+                        result.message = "当前状态不允许修改！";
+                        return result;
+                    }
+
+                    apply.FAgencyValue = info.FAgencyValue;
+                    apply.FAgencyName = ModelOpretion.FirstOrDefault<BaseAgencyInfo>(p => p.FValue == info.FAgencyValue).FName;
+                    apply.FGPS = info.FGPS;
+                    //apply.FLineName = info.FLineName;
+                    apply.FMileage = info.FMileage;
+                    apply.FModifyTime = DateTime.Now;
+                    apply.FModifyUserID = UserInfo.UserId;
+                    apply.FMonth = info.FMonth;
+                    //apply.FPerimeter = info.FPerimeter;
+                    //apply.FProbDescribe = info.FProbDescribe;
+                    //apply.FProbTypeID = info.FProbTypeID;
+                    apply.FRemark = info.FRemark;
+                    apply.FTwon = info.FTwon;
+                    apply.FYear = info.FYear;
+                    apply.FSynopsis = info.FSynopsis;
+                    apply.FPorjectName = info.FPorjectName;
+                    apply.FProjectTypeID = info.FProjectTypeID;
+                    apply.FInvestment = info.FInvestment;
+                    apply.FPlanDate = info.FPlanDate;
+                    apply.FLength = info.FLength;
+                    apply.FAcreage = info.FAcreage;
+                    apply.FAccountabilityUnit = info.FAccountabilityUnit;
+                    apply.FLiablePerson = info.FLiablePerson;
+                    apply.FMobile = info.FMobile;
+                    apply.FPurpose = info.FPurpose;
+
+
+                    int k = apply.SaveOnSubmit();
+                    if (k > 0)
+                    {
+                        result.code = 1;
+                        result.@object = apply.FID;
+                        result.message = "修改成功";
+                    }
+                }//新增
+                else
+                {
+                    info.FAddUserID = UserInfo.UserId;
+                    info.FAddTime = DateTime.Now;
+                    info.FStatus = 0;
+                    info.FAgencyName = ModelOpretion.FirstOrDefault<BaseAgencyInfo>(p => p.FValue == info.FAgencyValue).FName;
+                    info.FBillNo = BillNo.GetBillNo(info.FBillTypeID, info.FAgencyValue);
+                    int id = info.SaveOnSubmit();
+                    if (id > 0)
+                    {
+                        result.code = 1;
+                        result.@object = id;
+                        result.message = "添加成功！";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogService.Default.Fatal("保存表单出错：", ex.Message, ex);
+                result.code = 0;
+                result.message = "保存表单出错";
+            }
 
             return result;
         }

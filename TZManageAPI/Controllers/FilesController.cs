@@ -14,6 +14,7 @@ using BT.Manage.Tools.Utils;
 using System.Data;
 using TZManageAPI.DTO;
 using BT.Manage.Model;
+using BT.Manage.Verification;
 
 namespace TZManageAPI.Controllers
 {
@@ -25,6 +26,7 @@ namespace TZManageAPI.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
+        [BtLog]
         public Result UploadFileForQiNiu()
         {
             Result result = new Result();
@@ -73,6 +75,7 @@ namespace TZManageAPI.Controllers
         /// <param name="FAttachType">附件类型</param>
         /// <returns></returns>
         [HttpGet]
+        [BtLog]
         public Result GetFilesUrl(int FLoanID,int FBillTypeID,int FAttachType)
         {
             Result result = new Result();
@@ -111,6 +114,7 @@ namespace TZManageAPI.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [BtLog]
         public Result GetAttachTypeList(int FBillTypeID)
         {
             Result result = new Result();

@@ -1,5 +1,6 @@
 ﻿using BLL;
 using BT.Manage.Frame.Base;
+using BT.Manage.Verification;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace TZManageAPI.Controllers
         /// <param name="dto">登录参数</param>
         /// <returns>返回用户信息</returns>
         [HttpPost]
+        [BtLog]
         public Result GetUserInfo([FromBody] LoginDto dto)
         {
             var result = new Result();
@@ -50,6 +52,7 @@ namespace TZManageAPI.Controllers
         [HttpGet]
         [JwtAuthActionFilter]
         [AllowAnonymous]
+        [BtLog]
         public Result IsLogin()
         {
             var item = UserInfo;
@@ -77,6 +80,7 @@ namespace TZManageAPI.Controllers
         /// <returns>返回是否退出成功</returns>
         [HttpGet]
         [JwtAuthActionFilter]
+        [BtLog]
         public Result LoginOut()
         {
             return LoginBll.LoginOut(GetRequestToken);

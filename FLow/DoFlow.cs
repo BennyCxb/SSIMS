@@ -101,6 +101,7 @@ namespace FLow
         public static Result DoAdopt(FlowModel flowModel)
         {
             Result result = new Result();
+            result.code = 1;
             //验证基础参数
             if (flowModel == null)
             {
@@ -183,6 +184,7 @@ namespace FLow
         public static Result DoReject(FlowModel flowModel)
         {
             Result result = new Result();
+            result.code = 1;
             //验证基础参数
             if (flowModel == null)
             {

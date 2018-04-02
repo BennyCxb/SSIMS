@@ -30,12 +30,12 @@ m.FParameters,
 m.FSort
  from 
 t_sys_MenusForRole mr 
-left join t_sys_Menu m on m.FID=mr.FMenuID
+left join t_sys_Menu m on m.FID=mr.FMenuID and isnull(m.FIsDeleted,0)=0
 where mr.FRoleID in (
 	select ru.FRoleID from t_sys_Users u
 		left join t_sys_RolesForUser ru on ru.FUserID=u.FID
 		where u.FID=@userId and m.FID is not null 
-)
+) 
 order by m.FSort asc ").Parameter("userId", userId).QueryMany<Menu>();
 
             List<Menu> rootList = new List<Menu>();

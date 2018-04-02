@@ -51,9 +51,14 @@ namespace TZManageAPI.DTO
         public string User_FDataAt { get; set; }
 
         /// <summary>
-        /// 行政规划等级  1.市级 2.县级一级  3.县级二级
+        /// 行政规划等级  1.超级管理员 2.市级 3.县级一级  4.县级二级
         /// </summary>
         public int FLevel { get; set; }
+
+        /// <summary>
+        /// 行政区划
+        /// </summary>
+        public string FAgencyValue { get; set; }
 
     }
 

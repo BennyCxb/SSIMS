@@ -1,5 +1,6 @@
 ﻿using BLL;
 using BT.Manage.Frame.Base;
+using BT.Manage.Verification;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -19,6 +20,7 @@ namespace TZManageAPI.Controllers
         /// <returns></returns>
         [HttpGet]
         [JwtAuthActionFilter]
+        [BtLog]
         public Result GetAgencyList()
         {
             Result result = new Result();
@@ -42,6 +44,7 @@ namespace TZManageAPI.Controllers
         /// <param name="EnumType"></param>
         /// <returns></returns>
         [HttpGet]
+        [BtLog]
         public Result GetEnumList(string EnumType)
         {
             Result result = new Result();

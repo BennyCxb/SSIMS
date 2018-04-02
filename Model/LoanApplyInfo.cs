@@ -15,7 +15,7 @@ namespace BT.Manage.Model
     // 文件名：LoanApply.cs
     // 文件功能描述：【四边三化核准单】实体
     // 创建人：LiaoYu
-    // 创建标识： 2018/3/12 22:49:08
+    // 创建标识： 2018/4/2 20:39:40
     //-----------------------------------*/
     [TableName("t_Loan_Apply")]
     public class LoanApplyInfo  : BaseModel
@@ -138,17 +138,70 @@ namespace BT.Manage.Model
             /// </summary>
             [Display(Name = @"修改用户")]
             public System.DateTime? FModifyTime{ get; set; }
-
-        /// <summary>
-        /// 乡镇街道
-        /// </summary>
-        [Display(Name =@"乡镇街道")]
-        public string FTwon { get; set; }
-
-        /// <summary>
-        /// 备注
-        /// </summary>
-        [Display(Name =@"备注")]
-        public string FRemark { get; set; }
+            /// <summary>
+            /// 乡镇街道
+            /// </summary>
+            [Display(Name = @"乡镇街道")]
+            public string FTwon{ get; set; }
+            /// <summary>
+            /// 备注
+            /// </summary>
+            [Display(Name = @"备注")]
+            public string FRemark{ get; set; }
+            /// <summary>
+            /// 项目简介
+            /// </summary>
+            [Display(Name = @"项目简介")]
+            public string FSynopsis{ get; set; }
+            /// <summary>
+            /// 项目名称
+            /// </summary>
+            [Display(Name = @"项目名称")]
+            public string FPorjectName{ get; set; }
+            /// <summary>
+            /// 项目分类
+            /// </summary>
+            [Display(Name = @"项目分类")]
+            public int? FProjectTypeID{ get; set; }
+            /// <summary>
+            /// 投资金额
+            /// </summary>
+            [Display(Name = @"投资金额")]
+            public decimal? FInvestment{ get; set; }
+            /// <summary>
+            /// 计划完成时间
+            /// </summary>
+            [Display(Name = @"计划完成时间")]
+            public System.DateTime? FPlanDate{ get; set; }
+            /// <summary>
+            /// 长度
+            /// </summary>
+            [Display(Name = @"长度")]
+            public string FLength{ get; set; }
+            /// <summary>
+            /// 利用面积
+            /// </summary>
+            [Display(Name = @"利用面积")]
+            public decimal? FAcreage{ get; set; }
+            /// <summary>
+            /// 责任单位
+            /// </summary>
+            [Display(Name = @"责任单位")]
+            public string FAccountabilityUnit{ get; set; }
+            /// <summary>
+            /// 责任人
+            /// </summary>
+            [Display(Name = @"责任人")]
+            public string FLiablePerson{ get; set; }
+            /// <summary>
+            /// 联系方式
+            /// </summary>
+            [Display(Name = @"联系方式")]
+            public string FMobile{ get; set; }
+            /// <summary>
+            /// 用途
+            /// </summary>
+            [Display(Name = @"用途")]
+            public string FPurpose{ get; set; }
     }
 }
