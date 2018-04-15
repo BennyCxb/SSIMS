@@ -4,11 +4,17 @@ using BT.Manage.Verification;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using TZBaseFrame;
 using TZBaseFrame.Attributes;
 using TZManageAPI.Base;
 using TZManageAPI.DTO;
+using BT.Manage.Core;
+using System.Net;
+using BT.Manage.Tools.Utils;
+using System.IO;
 
 namespace TZManageAPI.Controllers
 {
@@ -87,5 +93,6 @@ namespace TZManageAPI.Controllers
         }
         #endregion   
 
+        
     }
 }

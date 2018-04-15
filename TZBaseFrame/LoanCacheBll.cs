@@ -58,13 +58,17 @@ namespace TZBaseFrame.Bll
             bool result = true;
             //清理缓存
             CleanCache();
-            LoanCacheInfo info = ModelOpretion.FirstOrDefault<LoanCacheInfo>(p => p.FCacheKey == key && p.FIsDeleted.ToSafeInt32(0) == 0);
-            if(info.FID>0)
-            {
-                info.FIsDeleted = 1;
-                result= info.Update().Submit()>0;
-            }
 
+            ModelOpretion.ExecuteSqlNoneQuery(@" update  t_Loan_Cache set FIsDeleted=1
+                                                    where FCacheKey=@FCacheKey AND ISNULL(FIsDeleted,0)=0 ", new { FCacheKey=key }).Submit();
+
+            //LoanCacheInfo info = ModelOpretion.FirstOrDefault<LoanCacheInfo>(p => p.FCacheKey == key && p.FIsDeleted.ToSafeInt32(0) == 0);
+            //if(info.FID>0)
+            //{
+            //    info.FIsDeleted = 1;
+            //    result= info.Update().Submit()>0;
+            //}
+            result = true;
             return result;
         }
 

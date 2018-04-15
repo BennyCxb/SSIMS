@@ -153,7 +153,7 @@ left join (select ev.FValue,ev.FName,et.FName as FTypeName from t_Base_EnumValue
             #endregion
 
             #region sql
-            string sql = @"select a.FID,a.FBillNo,FAgencyName,a.FPorjectName,a.FMileage,a.FLength,es.FName as FProjectName
+            string sql = @"select a.FID,a.FBillNo,FAgencyName,a.FPorjectName,a.FMileage,a.FLength,es.FName as FProjectType
                                 from t_Loan_Apply a 
                                 left join 
                                 (select ev.FValue,ev.FName,et.FName as FTypeName from t_Base_EnumValue ev 

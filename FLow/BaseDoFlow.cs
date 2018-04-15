@@ -247,7 +247,21 @@ where {1} = @FID  ", flowModel.TableName, flowModel.KeyFiledName), new {  FID = 
                 result.message = "当前状态不允许驳回。";
                 return result;
             }
-            
+
+            //验证用户是否有审核权限
+            bool haveFlow = ModelOpretion.ScalarDataExist(@"select flow.* from t_sys_Flow flow
+                                                    inner join t_sys_RolesForFlow rf on  rf.FFlowID=flow.FID
+                                                    inner join t_sys_RolesForUser ru on ru.FRoleID=rf.FRoleID
+                                                    inner join t_sys_Users u on u.FID=ru.FUserID
+                                                    where flow.FLevel=@FLevel
+                                                    and u.FID=@FUserID and ISNULL(u.FIsDeleted,0)=0", new { FLevel = flowModel.FCurrentLevel, FUserID = flowModel.UserID });
+            if (!haveFlow)
+            {
+                result.code = 0;
+                result.message = "没有该审核权限。";
+                return result;
+            }
+
             return result;
         }
 

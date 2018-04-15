@@ -365,14 +365,10 @@ namespace TZManageAPI.Controllers
                     apply.FAgencyValue = info.FAgencyValue;
                     apply.FAgencyName = ModelOpretion.FirstOrDefault<BaseAgencyInfo>(p => p.FValue == info.FAgencyValue).FName;
                     apply.FGPS = info.FGPS;
-                    //apply.FLineName = info.FLineName;
                     apply.FMileage = info.FMileage;
                     apply.FModifyTime = DateTime.Now;
                     apply.FModifyUserID = UserInfo.UserId;
                     apply.FMonth = info.FMonth;
-                    //apply.FPerimeter = info.FPerimeter;
-                    //apply.FProbDescribe = info.FProbDescribe;
-                    //apply.FProbTypeID = info.FProbTypeID;
                     apply.FRemark = info.FRemark;
                     apply.FTwon = info.FTwon;
                     apply.FYear = info.FYear;
@@ -422,6 +418,6 @@ namespace TZManageAPI.Controllers
 
             return result;
         }
-
+        
     }
 }

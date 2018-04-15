@@ -39,6 +39,29 @@ namespace TZManageAPI.Controllers
         }
 
         /// <summary>
+        /// 根据行政区划获取街道
+        /// </summary>
+        /// <param name="AgencyValue"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [JwtAuthActionFilter]
+        [BtLog]
+        public Result GetStreetListByAgency(string AgencyValue)
+        {
+            Result result = new Result() { code = 0 };
+
+            DataTable dt = BaseStreetBll.GetStreetListByAgency(AgencyValue);
+
+            if (dt.Rows.Count > 0)
+            {
+                result.code = 1;
+                result.@object = dt;
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// 根据枚举类型名获取枚举列表
         /// </summary>
         /// <param name="EnumType"></param>
