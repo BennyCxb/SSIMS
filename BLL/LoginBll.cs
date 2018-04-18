@@ -26,7 +26,7 @@ namespace BLL
 
             var itme = DbContext.StoredProcedure("Pro_SysLogin")
                 .Parameter("userName", dto.UserName)
-                .Parameter("userPwd", strPwd).QuerySingle<LoginDataDto>();
+                .Parameter("userPwd", strPwd).Parameter("project",dto.FProject).QuerySingle<LoginDataDto>();
             if (itme != null)
             {
                 itme.MenuJson = MenuBll.ReturnJson(itme.UserId);

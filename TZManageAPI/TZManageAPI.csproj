@@ -201,6 +201,7 @@
     <Compile Include="Common\FileTools.cs" />
     <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\FilesController.cs" />
+    <Compile Include="Controllers\FlowController.cs" />
     <Compile Include="Controllers\LoanApplyController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\OldCityController.cs" />

@@ -59,7 +59,7 @@ namespace TZManageAPI.Controllers
             }
             catch (Exception ex)
             {
-                LogService.Default.Fatal("获取老旧城区列表出错", ex.Message, ex);
+                LogService.Default.Fatal(ex,"获取老旧城区列表出错"+ ex.Message);
                 result.code = 0;
                 result.message = "获取列表出错";
             }
@@ -204,7 +204,7 @@ namespace TZManageAPI.Controllers
             }
             catch (Exception ex)
             {
-                LogService.Default.Fatal("保存老旧城区表单出错：", ex.Message, ex);
+                LogService.Default.Fatal(ex,"保存老旧城区表单出错：" + ex.Message );
                 result.code = 0;
                 result.message = "保存老旧城区表单出错";
             }
@@ -217,6 +217,8 @@ namespace TZManageAPI.Controllers
         //{
 
         //}
+
+        
 
     }
 }

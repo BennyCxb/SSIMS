@@ -82,25 +82,25 @@ namespace FLow.FLows
             result.code = 1;
             try
             {
-                //LoanApplyInfo info = ModelOpretion.FirstOrDefault<LoanApplyInfo>(flowModel.FID);
-                //info.FStatus = 0;
-                //info.FCheckLevel = 0;
-                //info.FNextCheckLevel = 0;
-                //info.FCheckName = string.Empty;
-                //info.FChangeStatus = 0;
-                //info.Update().Submit();
+                LoanOldCityInfo info = ModelOpretion.FirstOrDefault<LoanOldCityInfo>(flowModel.FID);
+                
+                info.FStatus = 0;
+                info.FCheckLevel = 0;
+                info.FNextCheckLevel = 0;
+                info.FCheckName = string.Empty;
+                info.Update().Submit();
 
-                //checkApplyInfo chkInfo = new checkApplyInfo();
-                //chkInfo.FBillTypeID = flowModel.FBillTypeID;
-                //chkInfo.FBillID = flowModel.FID;
-                //chkInfo.FLevelName = "驳回";
-                //chkInfo.FLevel = 0;
-                //chkInfo.FNextLevel = 0;
-                //chkInfo.FNextLevelName = string.Empty;
-                //chkInfo.FRemark = flowModel.FlowMessage;
-                //chkInfo.FAddTime = DateTime.Now;
-                //chkInfo.FAddUserID = flowModel.UserID;
-                //chkInfo.SaveOnSubmit();
+                checkApplyInfo chkInfo = new checkApplyInfo();
+                chkInfo.FBillTypeID = flowModel.FBillTypeID;
+                chkInfo.FBillID = flowModel.FID;
+                chkInfo.FLevelName = "驳回";
+                chkInfo.FLevel = 0;
+                chkInfo.FNextLevel = 0;
+                chkInfo.FNextLevelName = string.Empty;
+                chkInfo.FRemark = flowModel.FlowMessage;
+                chkInfo.FAddTime = DateTime.Now;
+                chkInfo.FAddUserID = flowModel.UserID;
+                chkInfo.SaveOnSubmit();
             }
             catch (Exception ex)
             {

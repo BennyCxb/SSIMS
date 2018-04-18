@@ -59,7 +59,7 @@ namespace TZManageAPI.Controllers
             }
             catch(Exception ex)
             {
-                LogService.Default.Fatal("获取省级问题列表出错",ex.Message,ex);
+                LogService.Default.Fatal(ex,"获取省级问题列表出错",ex.Message);
                 result.code = 0;
                 result.message = "获取省级问题列表出错";
             }
@@ -169,7 +169,7 @@ namespace TZManageAPI.Controllers
             }
             catch(Exception ex)
             {
-                LogService.Default.Fatal("保存问题表单出错：",ex.Message,ex);
+                LogService.Default.Fatal(ex,"保存问题表单出错：" +ex.Message);
                 result.code = 0;
                 result.message = "保存问题表单出错";
             }
@@ -209,86 +209,9 @@ namespace TZManageAPI.Controllers
             return result;
         }
 
-        /// <summary>
-        /// 省级问题提交
-        /// </summary>
-        /// <param name="flowModel"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [BtLog]
-        public Result SubmitSJApply([FromBody]FlowModel flowModel)
-        {
-            Result result = new Result();
-            result.code = 0;
-            flowModel.UserID= UserInfo.UserId;
-            result = DoFlow.DoSubmit(flowModel);
+       
 
-            return result;
-        }
-
-        /// <summary>
-        /// 省级问题审核
-        /// </summary>
-        /// <param name="flowModel"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [BtLog]
-        public Result AdoptSJApply([FromBody]FlowModel flowModel)
-        {
-            Result result = new Result();
-            result.code = 0;
-            flowModel.UserID = UserInfo.UserId;
-            result = DoFlow.DoAdopt(flowModel);
-
-            return result;
-        }
-
-        /// <summary>
-        /// 省级问题驳回
-        /// </summary>
-        /// <param name="flowModel"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [BtLog]
-        public Result RejectSJApply([FromBody]FlowModel flowModel)
-        {
-            Result result = new Result();
-            result.code = 0;
-            flowModel.UserID = UserInfo.UserId;
-            result = DoFlow.DoReject(flowModel);
-
-            return result;
-        }
-
-        /// <summary>
-        /// 获取审核情况列表
-        /// </summary>
-        /// <param name="FLoanID">问题主键ID</param>
-        /// <param name="FBillTypeID">单据类型</param>
-        /// <returns></returns>
-        [HttpGet]
-        [BtLog]
-        public Result GetCheckList(int FLoanID,int FBillTypeID)
-        {
-            Result result = new Result();
-            result.code = 0;
-
-            try
-            {
-                DataTable dt = LoanApplyBll.GetCheckList(FLoanID, FBillTypeID);
-                result.code = 1;
-                result.@object = dt;
-            }
-            catch(Exception ex)
-            {
-                LogService.Default.Fatal(@"获取审核情况错误",ex.Message,ex);
-                result.code = 0;
-                result.message = string.Format("获取审核情况错误");
-            }
-
-            return result;
-
-        }
+       
 
 
         /// <summary>

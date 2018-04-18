@@ -27,48 +27,115 @@ namespace BLL
         public static DataTable GetList(LoginDataDto userInfo, dynamic dy, int pageIndex, int pageSize, out int totalCount)
         {
             #region 查询参数
-            //string FBillNo = dy.FBillNo;
             string FStatus = dy.FStatus;
             string FAgencyValue = dy.FAgencyValue;
-            string FYear = dy.FYear;
-            string FMonth = dy.FMonth;
-            string FChangeStatus = dy.FChangeStatus;
+            string FTownValue = dy.FTownValue;
+            string FCityChangeType = dy.FCityChangeType;
+            string FTownChangeType = dy.FTownChangeType;
+            string FAfterChange = dy.FAfterChange;
+            string FChangeBeginDate = dy.FChangeBeginDate;
+            string FChangeEndDate = dy.FChangeEndDate;
+            string FAreaName = dy.FAreaName;
+
             string FBillTypeID = dy.FBillTypeID;
             string strSortFiled = dy.SortFiled;
             string strSortType = dy.SortType;
-            //四边
-            string FEdge = dy.FEdge;
-            //问题类型
-            string FProbType = dy.FProbType;
 
             #endregion
 
 
             #region sql
-            string sql = @"
+            string sql = @"select o.FID,es.FName FStatus,o.FAgencyName
+                ,o.FTownName,O.FAreaName
+                ,CONVERT(nvarchar(32), o.FChangeBeginDate,23) FChangeBeginDate,convert(nvarchar(32), o.FChangeEndDate,23) FChangeEndDate
+                ,ect.FName FCityChangeType,O.FTownChangeType,
+                eaf.FName FAfterChange
+                from t_loan_OldCity o
+                left join 
+                ( select et.FName AS FETName,ev.FValue,ev.FName 
+			                from t_Base_EnumType et 
+			                left join t_Base_EnumValue ev on ev.FEnumTypeID=et.FID 
+                ) ect on ect.FValue=O.FCityChangeType and ect.FETName='按台州市办法分类'
+                left join 
+                ( select et.FName AS FETName,ev.FValue,ev.FName 
+			                from t_Base_EnumType et 
+			                left join t_Base_EnumValue ev on ev.FEnumTypeID=et.FID 
+                ) eaf on eaf.FValue=o.FAfterChange and eaf.FETName='改造后用途'
+                left join 
+                ( select et.FName AS FETName,ev.FValue,ev.FName 
+			                from t_Base_EnumType et 
+			                left join t_Base_EnumValue ev on ev.FEnumTypeID=et.FID 
+                ) es on es.FValue=o.FStatus and es.FETName='审核状态'
+
 ";
 
 
             var qu = ModelOpretion.PageData(sql);
-            qu.Where(" isnull(a.FIsDeleted,0)=0 and a.FBillTypeID=@FBillTypeID ", new { FBillTypeID = FBillTypeID });
+            qu.Where(" isnull(o.FIsDeleted,0)=0 and o.FBillTypeID=@FBillTypeID ", new { FBillTypeID = FBillTypeID });
 
             #endregion
 
             #region 查询条件
+            //审核状态
+            if(!string.IsNullOrWhiteSpace(FStatus))
+            {
+                qu.Where(" o.FStatus=@FStatus " ,new{ FStatus = FStatus });
+            }
+            //行政区划
+            if(!string.IsNullOrWhiteSpace(FAgencyValue))
+            {
+                qu.Where(" o.FAgencyValue=@FAgencyValue ", new { FAgencyValue = FAgencyValue });
+            }
+            //乡镇街道
+            if(!string.IsNullOrWhiteSpace(FTownValue))
+            {
+                qu.Where(" o.FTownValue=@FTownValue ", new { FTownValue = FTownValue });
+            }
+            //市改造方式
+            if(!string.IsNullOrWhiteSpace(FCityChangeType))
+            {
+                qu.Where(" o.FCityChangeType=@FCityChangeType ", new { FCityChangeType = FCityChangeType });
+            }
+            //县级改造方式
+            if(!string.IsNullOrWhiteSpace(FTownChangeType))
+            {
+                qu.Where(" o.FTownChangeType like '%'+ @FTownChangeType +'%' ", new { FTownChangeType = FTownChangeType });
+            }
+            //改造后用途
+            if(!string.IsNullOrWhiteSpace(FAfterChange))
+            {
+                qu.Where(" o.FAfterChange=@FAfterChange ", new { FAfterChange = FAfterChange });
+            }
+            //拟开始时间
+            if(!string.IsNullOrWhiteSpace(FChangeBeginDate))
+            {
+                qu.Where(" convert(nvarchar(32),o.FChangeBeginDate,23)>=@FChangeBeginDate ", new { FChangeBeginDate = FChangeBeginDate });
+            }
+            //拟结束时间
+            if(!string.IsNullOrWhiteSpace(FChangeEndDate))
+            {
+                qu.Where(" convert(nvarchar(32),o.FChangeEndDate,23)<=@FChangeEndDate ", new { FChangeEndDate = FChangeEndDate });
+            }
+            //区块名称
+            if(!string.IsNullOrWhiteSpace(FAreaName))
+            {
+                qu.Where(" o.FAreaName like '%'+@FAreaName+'%' ", new { FAreaName = FAreaName });
+            }
 
+            
             #endregion
 
             #region 排序
             if (!string.IsNullOrEmpty(strSortFiled) && !string.IsNullOrEmpty(strSortType))
             {
                 if (strSortType.ToLower() == "desc")
-                { qu.ThenDESC("a." + strSortFiled); }
+                { qu.ThenDESC("o." + strSortFiled); }
                 else
-                { qu.ThenASC("a." + strSortFiled); }
+                { qu.ThenASC("o." + strSortFiled); }
             }
             else
             {
-                qu.ThenDESC("a.FID");
+                qu.ThenDESC("o.FID");
             }
             #endregion
 

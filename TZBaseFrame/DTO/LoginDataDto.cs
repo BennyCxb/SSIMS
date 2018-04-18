@@ -73,6 +73,11 @@ namespace TZManageAPI.DTO
         ///     密码
         /// </summary>
         public string UserPwd { get; set; }
+
+        /// <summary>
+        /// 项目标识
+        /// </summary>
+        public int FProject { get; set; }
     }
 
 
