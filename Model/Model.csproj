@@ -53,6 +53,8 @@
     <Compile Include="checkApplyInfo.cs" />
     <Compile Include="LoanApplyInfo.cs" />
     <Compile Include="loanFilesInfo.cs" />
+    <Compile Include="LoanOldCityExtend12Info.cs" />
+    <Compile Include="LoanOldCityExtend3Info.cs" />
     <Compile Include="LoanOldCityInfo.cs" />
     <Compile Include="tsysFlowInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

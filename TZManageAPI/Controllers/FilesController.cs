@@ -58,7 +58,7 @@ namespace TZManageAPI.Controllers
             }
             catch(Exception ex)
             {
-                LogService.Default.Fatal("附件上传失败:",ex.Message,ex);
+                LogService.Default.Fatal(ex,"附件上传失败:" +ex.Message);
                 result.code = 0;
                 result.message = "附件上传失败:" + ex.Message;
             }
@@ -82,7 +82,7 @@ namespace TZManageAPI.Controllers
             result.code = 0;
             List<FileDTO> fileList = new List<FileDTO>();
 
-            DataTable dt= ModelOpretion.SearchDataRetunDataTable(@"select f.FQiNiuKey,FFileName 
+            DataTable dt= ModelOpretion.SearchDataRetunDataTable(@"select f.FQiNiuKey,FFileName,f.FID
                                                     from t_loan_Files f
                                                     where f.FLoanID=@FLoanID and f.FBillTypeID=@FBillTypeID and f.FAttachmentTypeID=@FAttachmentTypeID ",
                                                     new { FLoanID= FLoanID, FBillTypeID= FBillTypeID , FAttachmentTypeID = FAttachType });
@@ -96,6 +96,7 @@ namespace TZManageAPI.Controllers
                 {
                     FileDTO file = new FileDTO()
                     {
+                        FID=dr["FID"].ToSafeInt32(0),
                         FileName = dr["FFileName"].ToString(),
                         FileUrl = urlResult.@object
                     };
@@ -125,5 +126,20 @@ namespace TZManageAPI.Controllers
 
             return result;
         }
+
+        /// <summary>
+        /// 删除文件
+        /// </summary>
+        /// <param name="FID"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [BtLog]
+        public Result DeleteFile(int FID)
+        {
+            Result result = new Result();
+
+            return result;
+        }
+
     }
 }

@@ -44,7 +44,7 @@ namespace FLow
                     flowModel = ConsummateFlowModelNomal(flowModel);
                     break;
                 case DealEnum.驳回:
-                    flowModel = ConsummateFlowModelNomal(flowModel);
+                    flowModel = ConsummateFlowModelReject(flowModel);
                     break;
             }
 
@@ -90,6 +90,32 @@ namespace FLow
 
             return flowModel;
         }
+
+        /// <summary>
+        /// 驳回时完善flowModel
+        /// </summary>
+        /// <param name="flowModel"></param>
+        /// <returns></returns>
+        private static FlowModel ConsummateFlowModelReject(FlowModel flowModel)
+        {
+            tsysFlowInfo flowInfo = new tsysFlowInfo();
+            //审核完成驳回时取最后一级审核级次当做当前级次  ly  为了应对县级问题在审核完成时做市级退回
+            if(flowModel.FCurrentLevel==0)
+            {
+                flowModel.FCurrentLevel = ModelOpretion.ModelList<tsysFlowInfo>(p => p.FBillTypeID == flowModel.FBillTypeID).OrderByDescending(p => p.FLevel).FirstOrDefault().FLevel;
+            }
+            flowInfo = ModelOpretion.FirstOrDefault<tsysFlowInfo>(p => p.FBillTypeID == flowModel.FBillTypeID && p.FLevel == flowModel.FCurrentLevel);
+            if (flowInfo.FID > 0)
+            {
+                flowModel.TableName = flowInfo.FTableName;
+                flowModel.FCheckTable = flowInfo.FCheckTable;
+                flowModel.KeyFiledName = flowInfo.FKeyName;
+                flowModel.FFlowFID = flowInfo.FID;
+            };
+
+            return flowModel;
+        }
+
 
         /// <summary>
         /// 验证流程权限
@@ -187,8 +213,10 @@ where {1} = @FID  ", flowModel.TableName, flowModel.KeyFiledName), new {  FID = 
             }
 
             //数据库level和前端level是否一致
-            LoanApplyInfo info = ModelOpretion.FirstOrDefault<LoanApplyInfo>(flowModel.FID);
-            if(info.FCheckLevel!=flowModel.FCurrentLevel)
+            bool ex = ModelOpretion.ScalarDataExist(string.Format(@" select * from {0}
+                where fid=@FID and FCheckLevel=@FCurrentLevel ", flowModel.TableName), new { FID = flowModel.FID, FCurrentLevel = flowModel.FCurrentLevel });
+
+            if(!ex)
             {
                 result.code = 0;
                 result.message = "当前状态不允许审核。";
@@ -233,20 +261,13 @@ where {1} = @FID  ", flowModel.TableName, flowModel.KeyFiledName), new {  FID = 
         {
             Result result = new Result();
             result.code = 1;
-            if (FStatus != 1)
+            if (FStatus == 0)
             {
                 result.code = 0;
                 result.message = "当前状态不允许驳回";
                 return result;
             }
-            //数据库level和前端level是否一致
-            LoanApplyInfo info = ModelOpretion.FirstOrDefault<LoanApplyInfo>(flowModel.FID);
-            if (info.FCheckLevel != flowModel.FCurrentLevel)
-            {
-                result.code = 0;
-                result.message = "当前状态不允许驳回。";
-                return result;
-            }
+            
 
             //验证用户是否有审核权限
             bool haveFlow = ModelOpretion.ScalarDataExist(@"select flow.* from t_sys_Flow flow

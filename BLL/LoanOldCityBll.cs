@@ -122,8 +122,17 @@ namespace BLL
                 qu.Where(" o.FAreaName like '%'+@FAreaName+'%' ", new { FAreaName = FAreaName });
             }
 
-            
+
             #endregion
+
+            #region 权限相关
+
+            if (userInfo.FLevel == 3 || userInfo.FLevel == 4)
+            {
+                qu.Where(@" o.FAgencyValue=@FAgencyValue    ", new { FAgencyValue = userInfo.FAgencyValue });
+            }
+
+            #endregion 
 
             #region 排序
             if (!string.IsNullOrEmpty(strSortFiled) && !string.IsNullOrEmpty(strSortType))

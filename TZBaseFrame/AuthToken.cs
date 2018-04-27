@@ -82,7 +82,15 @@ namespace BLL.Common
 
         public static PayLoad DecodeToken(string secret, string token)
         {
-            return JWT.Decode<PayLoad>(token, Encoding.UTF8.GetBytes(secret), JwsAlgorithm.HS256);
+            try
+            {
+                return JWT.Decode<PayLoad>(token, Encoding.UTF8.GetBytes(secret), JwsAlgorithm.HS256);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("解析Token出错", ex);
+            }
+            
         }
     }
 }

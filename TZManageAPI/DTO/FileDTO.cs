@@ -11,6 +11,11 @@ namespace TZManageAPI.DTO
     public class FileDTO
     {
         /// <summary>
+        /// 文件主键ID
+        /// </summary>
+        public int FID { get; set; }
+
+        /// <summary>
         /// 附件名称
         /// </summary>
         public string FileName { get; set; }
