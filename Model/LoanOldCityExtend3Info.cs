@@ -98,5 +98,10 @@ namespace BT.Manage.Model
         /// 是否删除
         /// </summary>
         public int? FIsDeleted { get; set; }
+
+        /// <summary>
+        /// 状态
+        /// </summary>
+        public int? FStatus { get; set; }
     }
 }

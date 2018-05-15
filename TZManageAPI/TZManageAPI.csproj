@@ -213,7 +213,9 @@
     <Compile Include="Controllers\StatisticalController.cs" />
     <Compile Include="DTO\FileDTO.cs" />
     <Compile Include="DTO\OldCityExtend12DTO.cs" />
+    <Compile Include="DTO\OldCityExtend12DTOShow.cs" />
     <Compile Include="DTO\OldCityExtend3DTO.cs" />
+    <Compile Include="DTO\OldCityExtend3DTOShow.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

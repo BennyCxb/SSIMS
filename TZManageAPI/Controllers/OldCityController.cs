@@ -116,12 +116,12 @@ namespace TZManageAPI.Controllers
                     LoanOldCityInfo oldCity = ModelOpretion.FirstOrDefault<LoanOldCityInfo>(info.FID);
 
                     //只有保存状态可以修改数据
-                    if (oldCity.FStatus != 0)
-                    {
-                        result.code = 0;
-                        result.message = "当前状态不允许修改！";
-                        return result;
-                    }
+                    //if (oldCity.FStatus != 0)
+                    //{
+                    //    result.code = 0;
+                    //    result.message = "当前状态不允许修改！";
+                    //    return result;
+                    //}
 
                     oldCity.FAgencyValue = info.FAgencyValue;
                     oldCity.FAgencyName = BaseAgencyBll.GetAgencyByID(info.FAgencyValue).FName;
@@ -199,17 +199,21 @@ namespace TZManageAPI.Controllers
                     int id = oldCity.SaveOnSubmit();
                     if (id > 0)
                     {
-                        for(int i=1;i<=6;i++)
+                        //改造方式1或2的新增5条改造进度
+                        if (oldCity.FCityChangeType == 1|| oldCity.FCityChangeType==2)
                         {
-                            LoanOldCityExtend12Info extendInfo = new LoanOldCityExtend12Info()
+                            for (int i = 1; i <= 5; i++)
                             {
-                                FAddTime=DateTime.Now,
-                                FAddUserID=UserInfo.UserId,
-                                FBillTypeID= 2000011,
-                                FLoanID=id,
-                                FStatus=i
-                            };
-                            extendInfo.SaveOnSubmit();
+                                LoanOldCityExtend12Info extendInfo = new LoanOldCityExtend12Info()
+                                {
+                                    FAddTime = DateTime.Now,
+                                    FAddUserID = UserInfo.UserId,
+                                    FBillTypeID = 2000011,
+                                    FLoanID = id,
+                                    FStatus = i
+                                };
+                                extendInfo.SaveOnSubmit();
+                            }
                         }
 
                         result.code = 1;
@@ -228,6 +232,39 @@ namespace TZManageAPI.Controllers
             return result;
         }
 
+        ///// <summary>
+        ///// 改造方式1或2保存（弃用）
+        ///// </summary>
+        ///// <param name="arr"></param>
+        ///// <returns></returns>
+        //[HttpPost]
+        //[BtLog]
+        //public Result SaveOldCityExtend12(JArray arr)
+        //{
+        //    Result result = new Result() { code = 1 };
+
+        //    try
+        //    {
+        //        IList<OldCityExtend12DTO> list = arr.ToObject<List<OldCityExtend12DTO>>();
+
+        //        foreach (OldCityExtend12DTO d in list)
+        //        {
+        //            LoanOldCityExtend12Info extendInfo = Mapper.Map<OldCityExtend12DTO, LoanOldCityExtend12Info>(d);
+        //            extendInfo.FModifyTime = DateTime.Now;
+        //            extendInfo.FModifyUser = UserInfo.UserId;
+        //            extendInfo.Update().Submit();
+        //        }
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        LogService.Default.Fatal(ex, "改造进度保存失败:" + ex.Message);
+        //        result.code = 0;
+        //        result.message = "改造进度保存失败";
+        //    }
+        //    return result;
+        //}
+
+
         /// <summary>
         /// 改造方式1或2保存
         /// </summary>
@@ -235,31 +272,36 @@ namespace TZManageAPI.Controllers
         /// <returns></returns>
         [HttpPost]
         [BtLog]
-        public Result SaveOldCityExtend12(JArray arr)
+        public Result SaveOldCityExtend12(JObject obj)
         {
             Result result = new Result() { code = 1 };
 
             try
             {
-                IList<OldCityExtend12DTO> list = arr.ToObject<List<OldCityExtend12DTO>>();
-
-                foreach (OldCityExtend12DTO d in list)
+                OldCityExtend12DTO dto = obj.ToObject<OldCityExtend12DTO>();
+                LoanOldCityExtend12Info extendInfo = Mapper.Map<OldCityExtend12DTO, LoanOldCityExtend12Info>(dto);
+                extendInfo.FModifyTime = DateTime.Now;
+                extendInfo.FModifyUser = UserInfo.UserId;
+                extendInfo.Update(p=>new object[]
                 {
-                    LoanOldCityExtend12Info extendInfo = Mapper.Map<OldCityExtend12DTO, LoanOldCityExtend12Info>(d);
-                    extendInfo.FModifyTime = DateTime.Now;
-                    extendInfo.FModifyUser = UserInfo.UserId;
-                    extendInfo.Update().Submit();
-                }
+                    p.FArea1,
+                    p.FArea2,
+                    p.FModifyTime,
+                    p.FModifyUser,
+                    p.FTime
+                }).Submit();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogService.Default.Fatal(ex, "改造进度保存失败:" + ex.Message);
                 result.code = 0;
                 result.message = "改造进度保存失败";
             }
-
             return result;
         }
+
+
+
 
         /// <summary>
         /// 获取改造方式1或2 实体
@@ -276,10 +318,14 @@ namespace TZManageAPI.Controllers
             {
                 List<LoanOldCityExtend12Info> list = ModelOpretion.ModelList<LoanOldCityExtend12Info>(p => p.FLoanID == FLoanID);
                 
+                IList<OldCityExtend12DTOShow> listDTO = Mapper.Map<List<LoanOldCityExtend12Info>, List<OldCityExtend12DTOShow>>(list);
 
-                IList<OldCityExtend12DTO> listDTO = Mapper.Map<List<LoanOldCityExtend12Info>, List<OldCityExtend12DTO>>(list);
+                //获取主表改造进度
+                LoanOldCityInfo oldInfo = ModelOpretion.FirstOrDefault<LoanOldCityInfo>(FLoanID);
+
 
                 result.@object = listDTO;
+                result.message = oldInfo.FChangeStatus.ToSafeString();
             }
             catch(Exception ex)
             {
@@ -291,6 +337,65 @@ namespace TZManageAPI.Controllers
             return result;
         }
 
+
+        /// <summary>
+        /// 上报改造方式1或2
+        /// </summary>
+        /// <param name="FID">改造方式1或2实体ID</param>
+        /// <returns></returns>
+        [HttpGet]
+        [BtLog]
+        public Result SubmitOldCityExtend12(int FID)
+        {
+            Result result = new Result() { code = 1 };
+
+            try
+            {
+                LoanOldCityExtend12Info info = ModelOpretion.FirstOrDefault<LoanOldCityExtend12Info>(FID);
+                if(info.FID>0)
+                {
+                    if(info.FSubmitStatus==1)
+                    {
+                        result.code = 0;
+                        result.message = "该状态不允许上报";
+                    }
+                    else
+                    {
+                        info.FSubmitStatus = 1;
+                        info.Update(p => new object[]
+                        {
+                            p.FSubmitStatus
+                        }).Submit();
+
+                        //修改主表改造进度
+                        LoanOldCityInfo oldInfo = ModelOpretion.FirstOrDefault<LoanOldCityInfo>(info.FLoanID);
+                        oldInfo.FChangeStatus = info.FStatus;
+                        oldInfo.Update(p => new object[]
+                        {
+                            p.FChangeStatus
+                        }).Submit();
+                    }
+                }
+                else
+                {
+                    result.code = 0;
+                    result.message = "该实体不存在";
+                }
+            }
+            catch(Exception ex)
+            {
+                LogService.Default.Fatal("改造方式1或2上报失败："+ex.Message);
+                result.code = 0;
+                result.message = "上报失败。";
+            }
+
+
+            return result;
+        }
+       
+
+
+
         /// <summary>
         /// 保存老旧城区改造进度（改造方式为3）
         /// </summary>
@@ -298,32 +403,42 @@ namespace TZManageAPI.Controllers
         /// <returns></returns>
         [HttpPost]
         [BtLog]
-        public Result SaveOldCityExtend3(JArray arr)
+        public Result SaveOldCityExtend3(JObject obj)
         {
             Result result = new Result() { code = 1 };
 
             try
             {
-                List<OldCityExtend3DTO> listdto = arr.ToObject<List<OldCityExtend3DTO>>();
-                List<LoanOldCityExtend3Info> list = Mapper.Map<List<OldCityExtend3DTO>, List<LoanOldCityExtend3Info>>(listdto);
+                OldCityExtend3DTO dto = obj.ToObject<OldCityExtend3DTO>();
+                LoanOldCityExtend3Info info = Mapper.Map<OldCityExtend3DTO, LoanOldCityExtend3Info>(dto);
 
-                foreach (LoanOldCityExtend3Info info in list)
+
+                //修改
+                if (info.FID > 0)
                 {
-                    //修改
-                    if(info.FID>0)
+                    info.FModifyTime = DateTime.Now;
+                    info.FModifyUser = UserInfo.UserId;
+                    info.Update(p=>new object[] 
                     {
-                        info.FModifyTime= DateTime.Now;
-                        info.FModifyUser = UserInfo.UserId;
-                        info.Update().Submit();
-                    }
-                    else
-                    {
-                        info.FAddTime= DateTime.Now;
-                        info.FAddUserID = UserInfo.UserId;
-                        info.FBillTypeID = 2000012;
-                        info.SaveOnSubmit();
-                    }
+                        p.FCompanyName,
+                        p.FDoingTime,
+                        p.FDoingType,
+                        p.FDoneTime,
+                        p.FDoneType,
+                        p.FModifyTime,
+                        p.FModifyUser,
+                        p.FReadyArea,
+                        p.FReadyType
+                    }).Submit();
                 }
+                else
+                {
+                    info.FAddTime = DateTime.Now;
+                    info.FAddUserID = UserInfo.UserId;
+                    info.FBillTypeID = 2000012;
+                    info.SaveOnSubmit();
+                }
+
             }
             catch (Exception ex)
             {
@@ -355,6 +470,7 @@ namespace TZManageAPI.Controllers
                     extendInfo.FAddTime = DateTime.Now;
                     extendInfo.FAddUserID = UserInfo.UserId;
                     extendInfo.FBillTypeID = 2000012;
+                    extendInfo.FStatus = 0;
                     result.@object = extendInfo.SaveOnSubmit();
                 }
             }
@@ -384,7 +500,7 @@ namespace TZManageAPI.Controllers
             {
                 List<LoanOldCityExtend3Info> list = ModelOpretion.ModelList<LoanOldCityExtend3Info>(p => p.FLoanID == FLoanID && p.FIsDeleted.ToSafeInt32(0)==0);
                 
-                IList<OldCityExtend3DTO> listDTO = Mapper.Map<List<LoanOldCityExtend3Info>, List<OldCityExtend3DTO>>(list);
+                IList<OldCityExtend3DTOShow> listDTO = Mapper.Map<List<LoanOldCityExtend3Info>, List<OldCityExtend3DTOShow>>(list);
 
                 result.@object = listDTO;
             }
@@ -398,7 +514,63 @@ namespace TZManageAPI.Controllers
             return result;
         }
 
-        
+        /// <summary>
+        /// 上报改造方式3
+        /// </summary>
+        /// <param name="FID">改造方式1或2实体ID</param>
+        /// <returns></returns>
+        [HttpGet]
+        [BtLog]
+        public Result SubmitOldCityExtend3(int FID)
+        {
+            Result result = new Result() { code = 1 };
+
+            try
+            {
+                LoanOldCityExtend3Info info = ModelOpretion.FirstOrDefault<LoanOldCityExtend3Info>(FID);
+                if (info.FID > 0)
+                {
+                    if (info.FStatus == 2)
+                    {
+                        result.code = 0;
+                        result.message = "该状态不允许上报";
+                    }
+                    else
+                    {
+                        if (info.FStatus == 1)
+                        {
+                            info.FStatus = 2;
+                        }
+                        else
+                        {
+                            info.FStatus = 1;
+                        }
+                        
+                        info.Update(p => new object[]
+                        {
+                            p.FStatus
+                        }).Submit();
+                        
+                    }
+                }
+                else
+                {
+                    result.code = 0;
+                    result.message = "该实体不存在";
+                }
+            }
+            catch (Exception ex)
+            {
+                LogService.Default.Fatal("改造方式3上报失败：" + ex.Message);
+                result.code = 0;
+                result.message = "上报失败。";
+            }
+
+
+            return result;
+        }
+
+
 
         /// <summary>
         /// 删除改造进度

@@ -37,9 +37,11 @@ namespace TZManageAPI
                     //老旧城区改造方式1或2 
                     cfg.CreateMap<OldCityExtend12DTO, LoanOldCityExtend12Info>();
                     cfg.CreateMap<LoanOldCityExtend12Info, OldCityExtend12DTO>();
+                    cfg.CreateMap<LoanOldCityExtend12Info, OldCityExtend12DTOShow>();
                     //老旧城区改造进度（改造方式3）
                     cfg.CreateMap<OldCityExtend3DTO, LoanOldCityExtend3Info>();
                     cfg.CreateMap< LoanOldCityExtend3Info, OldCityExtend3DTO>();
+                    cfg.CreateMap<LoanOldCityExtend3Info, OldCityExtend3DTOShow>();
                 }
                 );
             }

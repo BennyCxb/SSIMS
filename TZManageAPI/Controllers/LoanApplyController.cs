@@ -141,6 +141,7 @@ namespace TZManageAPI.Controllers
                     apply.FRemark = info.FRemark;
                     apply.FTwon = info.FTwon;
                     apply.FYear = info.FYear;
+                    apply.FBillNo = info.FBillNo;
 
                     
                     int k = apply.SaveOnSubmit();
@@ -153,11 +154,20 @@ namespace TZManageAPI.Controllers
                 }//新增
                 else
                 {
+                    //检验问题编号是否已存在
+                    bool exBillInfo = ModelOpretion.ScalarDataExist(@" select * from t_Loan_Apply
+                                                        where FBillNo = @FBillNo AND FBillTypeID=@FBillTypeID ", new { FBillNo = info.FBillNo, FBillTypeID = info.FBillTypeID });
+                    if (exBillInfo)
+                    {
+                        result.code = 0;
+                        result.message = "该问题编号已存在！";
+                        return result;
+                    }
                     info.FAddUserID = UserInfo.UserId;
                     info.FAddTime = DateTime.Now;
                     info.FStatus = 0;
                     info.FAgencyName = ModelOpretion.FirstOrDefault<BaseAgencyInfo>(p=>p.FValue==info.FAgencyValue).FName;
-                    info.FBillNo= BillNo.GetBillNo(info.FBillTypeID, info.FAgencyValue);
+                    //info.FBillNo= BillNo.GetBillNo(info.FBillTypeID, info.FAgencyValue);
                     int id = info.SaveOnSubmit();
                     if (id > 0)
                     {
@@ -306,6 +316,8 @@ namespace TZManageAPI.Controllers
                     apply.FLiablePerson = info.FLiablePerson;
                     apply.FMobile = info.FMobile;
                     apply.FPurpose = info.FPurpose;
+                    apply.FBillNo = info.FBillNo;
+                    apply.FIsSpecialProject = info.FIsSpecialProject;
 
 
                     int k = apply.SaveOnSubmit();
@@ -318,11 +330,20 @@ namespace TZManageAPI.Controllers
                 }//新增
                 else
                 {
+                    //检验问题编号是否已存在
+                    bool exBillInfo = ModelOpretion.ScalarDataExist(@" select * from t_Loan_Apply
+                                                        where FBillNo = @FBillNo AND FBillTypeID=@FBillTypeID ", new { FBillNo = info.FBillNo, FBillTypeID= info.FBillTypeID });
+                    if(exBillInfo)
+                    {
+                        result.code = 0;
+                        result.message = "该问题编号已存在！";
+                        return result;
+                    }
                     info.FAddUserID = UserInfo.UserId;
                     info.FAddTime = DateTime.Now;
                     info.FStatus = 0;
                     info.FAgencyName = ModelOpretion.FirstOrDefault<BaseAgencyInfo>(p => p.FValue == info.FAgencyValue).FName;
-                    info.FBillNo = BillNo.GetBillNo(info.FBillTypeID, info.FAgencyValue);
+                    //info.FBillNo = BillNo.GetBillNo(info.FBillTypeID, info.FAgencyValue);
                     int id = info.SaveOnSubmit();
                     if (id > 0)
                     {

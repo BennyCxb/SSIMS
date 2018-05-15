@@ -101,7 +101,7 @@ left join (select ev.FValue,ev.FName,et.FName as FTypeName from t_Base_EnumValue
 
             if(userInfo.FLevel==3 || userInfo.FLevel==4)
             {
-                qu.Where(@" a.FAgencyValue=@FAgencyValue    ", new { FAgencyValue = userInfo.FAgencyValue });
+                qu.Where(@" a.FAgencyValue=@FAgencyValueOp    ", new { FAgencyValueOp = userInfo.FAgencyValue });
             }
 
             #endregion 

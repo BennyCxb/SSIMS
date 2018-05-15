@@ -79,5 +79,11 @@ namespace BT.Manage.Model
             /// </summary>
             [Display(Name = @"")]
             public System.DateTime? FModifyTime{ get; set; }
+
+        /// <summary>
+        /// 提交状态
+        /// </summary>
+        [Display(Name ="提交状态")]
+        public int? FSubmitStatus { get; set; }
     }
 }

@@ -200,5 +200,11 @@ namespace BT.Manage.Model
         /// </summary>
         [Display(Name =@"修改时间")]
         public DateTime? FModifyTime { get; set; }
+
+        /// <summary>
+        /// 改造进度
+        /// </summary>
+        [Display(Name =@"改造进度")]
+        public int? FChangeStatus { get; set; }
     }
 }

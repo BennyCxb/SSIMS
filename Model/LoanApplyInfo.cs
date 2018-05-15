@@ -203,5 +203,13 @@ namespace BT.Manage.Model
             /// </summary>
             [Display(Name = @"用途")]
             public string FPurpose{ get; set; }
+
+
+
+        /// <summary>
+        /// 是否是精品项目
+        /// </summary>
+        [Display(Name =@"是否是精品项目")]
+        public int? FIsSpecialProject { get; set; }
     }
 }
