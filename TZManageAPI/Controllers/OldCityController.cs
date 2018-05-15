@@ -147,6 +147,7 @@ namespace TZManageAPI.Controllers
                     oldCity.FChangeBeginDate = info.FChangeBeginDate;
                     oldCity.FChangeEndDate = info.FChangeEndDate;
                     oldCity.FChangeRemark = info.FChangeRemark;
+                    oldCity.FDemonstration = info.FDemonstration;
 
 
                     oldCity.FModifyTime = DateTime.Now;
@@ -190,6 +191,7 @@ namespace TZManageAPI.Controllers
                     oldCity.FChangeBeginDate = info.FChangeBeginDate;
                     oldCity.FChangeEndDate = info.FChangeEndDate;
                     oldCity.FChangeRemark = info.FChangeRemark;
+                    oldCity.FDemonstration = info.FDemonstration;
 
                     oldCity.FBillTypeID = info.FBillTypeID;
                     oldCity.FIsDeleted = 0;

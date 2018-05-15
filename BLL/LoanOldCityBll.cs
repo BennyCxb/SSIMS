@@ -36,6 +36,8 @@ namespace BLL
             string FChangeBeginDate = dy.FChangeBeginDate;
             string FChangeEndDate = dy.FChangeEndDate;
             string FAreaName = dy.FAreaName;
+            string FYear = dy.FYear;
+            string FMonth = dy.FMonth;
 
             string FBillTypeID = dy.FBillTypeID;
             string strSortFiled = dy.SortFiled;
@@ -45,7 +47,7 @@ namespace BLL
 
 
             #region sql
-            string sql = @"select o.FID,es.FName FStatus,o.FAgencyName
+            string sql = @"select o.FID,es.FName FStatus,o.FAgencyName,YEAR(o.FChangeBeginDate) FYear,MONTH(o.FChangeBeginDate) FMonth
                 ,o.FTownName,O.FAreaName
                 ,CONVERT(nvarchar(32), o.FChangeBeginDate,23) FChangeBeginDate,convert(nvarchar(32), o.FChangeEndDate,23) FChangeEndDate
                 ,ect.FName FCityChangeType,O.FTownChangeType,
@@ -120,6 +122,16 @@ namespace BLL
             if(!string.IsNullOrWhiteSpace(FAreaName))
             {
                 qu.Where(" o.FAreaName like '%'+@FAreaName+'%' ", new { FAreaName = FAreaName });
+            }
+            //年度
+            if(!string.IsNullOrWhiteSpace(FYear))
+            {
+                qu.Where(" YEAR(o.FChangeBeginDate)=@FYear ", new { FYear = FYear });
+            }
+            //月度
+            if (!string.IsNullOrWhiteSpace(FMonth))
+            {
+                qu.Where(" MONTH(o.FChangeBeginDate)=@FMonth ", new { FMonth = FMonth });
             }
 
 

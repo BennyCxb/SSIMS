@@ -37,15 +37,15 @@ namespace BLL
             #endregion
 
             #region sql
-            string sql = @"select a.FID,a.FBillNo,FAgencyName,a.FLineName,a.FMileage,ep.FName as FProbType,es.FName as FStatusName,a.FStatus 
-,ec.FName as FChangeStatusName
-from t_Loan_Apply a 
-left join (select ev.FValue,ev.FName,et.FName as FTypeName from t_Base_EnumValue ev 
-					left join t_Base_EnumType et on et.FID=ev.FEnumTypeID ) es on es.FTypeName='审核状态' and es.FValue=a.FStatus
-left join (select ev.FValue,ev.FName,et.FName as FTypeName from t_Base_EnumValue ev 
-					left join t_Base_EnumType et on et.FID=ev.FEnumTypeID ) ep on ep.FTypeName='问题类型' and ep.FValue=a.FProbTypeID
-left join (select ev.FValue,ev.FName,et.FName as FTypeName from t_Base_EnumValue ev 
-					left join t_Base_EnumType et on et.FID=ev.FEnumTypeID ) ec on ec.FTypeName='整改状态' and ec.FValue=ISNULL(a.FChangeStatus,0)
+            string sql = @"select a.FID,a.FYear,a.FMonth,a.FBillNo,FAgencyName,a.FLineName,a.FMileage,ep.FName as FProbType,es.FName as FStatusName,a.FStatus 
+            ,ec.FName as FChangeStatusName
+            from t_Loan_Apply a 
+            left join (select ev.FValue,ev.FName,et.FName as FTypeName from t_Base_EnumValue ev 
+					            left join t_Base_EnumType et on et.FID=ev.FEnumTypeID ) es on es.FTypeName='审核状态' and es.FValue=a.FStatus
+            left join (select ev.FValue,ev.FName,et.FName as FTypeName from t_Base_EnumValue ev 
+					            left join t_Base_EnumType et on et.FID=ev.FEnumTypeID ) ep on ep.FTypeName='问题类型' and ep.FValue=a.FProbTypeID
+            left join (select ev.FValue,ev.FName,et.FName as FTypeName from t_Base_EnumValue ev 
+					            left join t_Base_EnumType et on et.FID=ev.FEnumTypeID ) ec on ec.FTypeName='整改状态' and ec.FValue=ISNULL(a.FChangeStatus,0)
 ";
 
             var qu = ModelOpretion.PageData(sql);
@@ -153,7 +153,7 @@ left join (select ev.FValue,ev.FName,et.FName as FTypeName from t_Base_EnumValue
             #endregion
 
             #region sql
-            string sql = @"select a.FID,a.FBillNo,FAgencyName,a.FPorjectName,a.FMileage,a.FLength,es.FName as FProjectType
+            string sql = @"select a.FID,a.FYear,a.FMonth,a.FBillNo,FAgencyName,a.FPorjectName,a.FMileage,a.FLength,es.FName as FProjectType
                                 from t_Loan_Apply a 
                                 left join 
                                 (select ev.FValue,ev.FName,et.FName as FTypeName from t_Base_EnumValue ev 

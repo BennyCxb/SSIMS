@@ -206,5 +206,11 @@ namespace BT.Manage.Model
         /// </summary>
         [Display(Name =@"改造进度")]
         public int? FChangeStatus { get; set; }
+
+        /// <summary>
+        /// 十大老旧工业区块改造示范点
+        /// </summary>
+        [Display(Name = @"十大老旧工业区块改造示范点")]
+        public string FDemonstration { get; set; }
     }
 }

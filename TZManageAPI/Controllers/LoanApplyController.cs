@@ -141,9 +141,22 @@ namespace TZManageAPI.Controllers
                     apply.FRemark = info.FRemark;
                     apply.FTwon = info.FTwon;
                     apply.FYear = info.FYear;
+                    //问题编号有修改
+                    if(info.FBillNo!=apply.FBillNo)
+                    {
+                        //检验问题编号是否已存在
+                        bool exBillInfo = ModelOpretion.ScalarDataExist(@" select * from t_Loan_Apply
+                                                        where FBillNo = @FBillNo AND FBillTypeID=@FBillTypeID ", new { FBillNo = info.FBillNo, FBillTypeID = info.FBillTypeID });
+                        if (exBillInfo)
+                        {
+                            result.code = 0;
+                            result.message = "该问题编号已存在！";
+                            return result;
+                        }
+                    }
                     apply.FBillNo = info.FBillNo;
 
-                    
+
                     int k = apply.SaveOnSubmit();
                     if (k > 0)
                     {
@@ -316,9 +329,21 @@ namespace TZManageAPI.Controllers
                     apply.FLiablePerson = info.FLiablePerson;
                     apply.FMobile = info.FMobile;
                     apply.FPurpose = info.FPurpose;
-                    apply.FBillNo = info.FBillNo;
                     apply.FIsSpecialProject = info.FIsSpecialProject;
-
+                    //问题编号有修改
+                    if (info.FBillNo != apply.FBillNo)
+                    {
+                        //检验问题编号是否已存在
+                        bool exBillInfo = ModelOpretion.ScalarDataExist(@" select * from t_Loan_Apply
+                                                        where FBillNo = @FBillNo AND FBillTypeID=@FBillTypeID ", new { FBillNo = info.FBillNo, FBillTypeID = info.FBillTypeID });
+                        if (exBillInfo)
+                        {
+                            result.code = 0;
+                            result.message = "该问题编号已存在！";
+                            return result;
+                        }
+                    }
+                    apply.FBillNo = info.FBillNo;
 
                     int k = apply.SaveOnSubmit();
                     if (k > 0)
