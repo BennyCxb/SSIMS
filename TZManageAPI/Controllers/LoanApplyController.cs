@@ -16,6 +16,7 @@ using FLow;
 using TZManageAPI.Common;
 using BT.Manage.Tools.Utils;
 using BT.Manage.Verification;
+using Newtonsoft.Json;
 
 namespace TZManageAPI.Controllers
 {
@@ -52,6 +53,11 @@ namespace TZManageAPI.Controllers
             try
             {
                 DataTable dt= LoanApplyBll.GetSJApplyList(UserInfo, dy, curr, pageSize, out totalCount);
+
+                if (dt.Rows.Count == 0)
+                {
+                    LogService.Default.Debug("没有获取到列表的记录:"+UserInfo.FAgencyValue+"入参:"+JsonConvert.SerializeObject(dy));
+                }
 
                 result.code = 1;
                 result.@object = dt;
@@ -146,7 +152,7 @@ namespace TZManageAPI.Controllers
                     {
                         //检验问题编号是否已存在
                         bool exBillInfo = ModelOpretion.ScalarDataExist(@" select * from t_Loan_Apply
-                                                        where FBillNo = @FBillNo AND FBillTypeID=@FBillTypeID ", new { FBillNo = info.FBillNo, FBillTypeID = info.FBillTypeID });
+                                                        where FBillNo = @FBillNo AND FBillTypeID=@FBillTypeID AND ISNULL(FIsDeleted,0)=0 ", new { FBillNo = info.FBillNo, FBillTypeID = info.FBillTypeID });
                         if (exBillInfo)
                         {
                             result.code = 0;
@@ -169,7 +175,7 @@ namespace TZManageAPI.Controllers
                 {
                     //检验问题编号是否已存在
                     bool exBillInfo = ModelOpretion.ScalarDataExist(@" select * from t_Loan_Apply
-                                                        where FBillNo = @FBillNo AND FBillTypeID=@FBillTypeID ", new { FBillNo = info.FBillNo, FBillTypeID = info.FBillTypeID });
+                                                        where FBillNo = @FBillNo AND FBillTypeID=@FBillTypeID AND ISNULL(FIsDeleted,0)=0  ", new { FBillNo = info.FBillNo, FBillTypeID = info.FBillTypeID });
                     if (exBillInfo)
                     {
                         result.code = 0;
@@ -335,7 +341,7 @@ namespace TZManageAPI.Controllers
                     {
                         //检验问题编号是否已存在
                         bool exBillInfo = ModelOpretion.ScalarDataExist(@" select * from t_Loan_Apply
-                                                        where FBillNo = @FBillNo AND FBillTypeID=@FBillTypeID ", new { FBillNo = info.FBillNo, FBillTypeID = info.FBillTypeID });
+                                                        where FBillNo = @FBillNo AND FBillTypeID=@FBillTypeID AND ISNULL(FIsDeleted,0)=0  ", new { FBillNo = info.FBillNo, FBillTypeID = info.FBillTypeID });
                         if (exBillInfo)
                         {
                             result.code = 0;
@@ -357,7 +363,7 @@ namespace TZManageAPI.Controllers
                 {
                     //检验问题编号是否已存在
                     bool exBillInfo = ModelOpretion.ScalarDataExist(@" select * from t_Loan_Apply
-                                                        where FBillNo = @FBillNo AND FBillTypeID=@FBillTypeID ", new { FBillNo = info.FBillNo, FBillTypeID= info.FBillTypeID });
+                                                        where FBillNo = @FBillNo AND FBillTypeID=@FBillTypeID AND ISNULL(FIsDeleted,0)=0  ", new { FBillNo = info.FBillNo, FBillTypeID= info.FBillTypeID });
                     if(exBillInfo)
                     {
                         result.code = 0;

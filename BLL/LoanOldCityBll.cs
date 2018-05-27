@@ -141,7 +141,7 @@ namespace BLL
 
             if (userInfo.FLevel == 3 || userInfo.FLevel == 4)
             {
-                qu.Where(@" a.FAgencyValue=@FAgencyValueOp    ", new { FAgencyValueOp = userInfo.FAgencyValue });
+                qu.Where(@" o.FAgencyValue=@FAgencyValueOp    ", new { FAgencyValueOp = userInfo.FAgencyValue });
             }
 
             #endregion 
