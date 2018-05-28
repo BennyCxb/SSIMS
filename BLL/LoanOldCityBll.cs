@@ -139,6 +139,12 @@ namespace BLL
 
             #region 权限相关
 
+            //市级只看上报完成的
+            if(userInfo.FLevel==2)
+            {
+                qu.Where(" o.FStatus=@FStatusOp ", new { FStatusOp = 2 });
+            }
+
             if (userInfo.FLevel == 3 || userInfo.FLevel == 4)
             {
                 qu.Where(@" o.FAgencyValue=@FAgencyValueOp    ", new { FAgencyValueOp = userInfo.FAgencyValue });

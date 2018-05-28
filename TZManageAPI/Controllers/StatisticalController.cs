@@ -421,7 +421,7 @@ from t_Base_Agency ag
                 )
 
                 select ROW_NUMBER() over(ORDER BY o.FID asc) rowID,o.FAreaName,isnull(o.FIndustry,0) FIndustry
-                ,o.FAreaName,isnull(o.FOccupy,0) FOccupy,isnull(o.FTotalAcreage,0) FTotalAcreage
+                ,o.FAgencyName,isnull(o.FOccupy,0) FOccupy,isnull(o.FTotalAcreage,0) FTotalAcreage
                 ,isnull(FNonConBuildingArea,0) FNonConBuildingArea
                 ,enc.FEVName
                 ,o.FTownChangeType
@@ -475,7 +475,7 @@ from t_Base_Agency ag
 
                         select ROW_NUMBER() over(ORDER BY o.FID asc) '序号'
                         ,o.FAreaName '区块名称',isnull(o.FIndustry,0) '主要产业'
-                        ,o.FAreaName '所属县市区',isnull(o.FOccupy,0) '总占地'
+                        ,o.FAgencyName '所属县市区',isnull(o.FOccupy,0) '总占地'
                         ,isnull(o.FTotalAcreage,0) '总建筑面积'
                         ,isnull(FNonConBuildingArea,0) '其中违建面积'
                         ,enc.FEVName '市定改造方式'
