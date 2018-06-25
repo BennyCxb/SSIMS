@@ -33,6 +33,7 @@ namespace BLL
             string FEdge = dy.FEdge;
             //问题类型
             string FProbType = dy.FProbType;
+            string FPorjectName = dy.FPorjectName;
 
             #endregion
 
@@ -94,12 +95,23 @@ namespace BLL
             {
                 qu.Where(@" a.FProbTypeID=@FProbTypeID ",new { FProbTypeID= FProbType });
             }
+            //项目名称
+            if(!string.IsNullOrWhiteSpace(FPorjectName))
+            {
+                qu.Where(@" a.FPorjectName like '%'+@FPorjectName+'%' ", new { FPorjectName = FPorjectName });
+            }
 
             #endregion
 
             #region 权限相关
 
-            if(userInfo.FLevel==3 || userInfo.FLevel==4)
+            //市级只看上报完成的
+            if (userInfo.FLevel == 2)
+            {
+                qu.Where(" a.FStatus>=1 ", new { });
+            }
+
+            if (userInfo.FLevel==3 || userInfo.FLevel==4)
             {
                 qu.Where(@" a.FAgencyValue=@FAgencyValueOp    ", new { FAgencyValueOp = userInfo.FAgencyValue });
             }
@@ -149,7 +161,7 @@ namespace BLL
             string FProjectTypeID = dy.FProjectTypeID;
             string strSortFiled = dy.SortFiled;
             string strSortType = dy.SortType;
-
+            string FPorjectName = dy.FPorjectName;
             #endregion
 
             #region sql
@@ -191,6 +203,11 @@ namespace BLL
             {
                 qu.Where(@" a.FProjectTypeID=@FProjectTypeID ", new { FProjectTypeID = FProjectTypeID });
             }
+            //项目名称
+            if (!string.IsNullOrWhiteSpace(FPorjectName))
+            {
+                qu.Where(@" a.FPorjectName like '%'+@FPorjectName+'%' ", new { FPorjectName = FPorjectName });
+            }
 
             #endregion
 
@@ -198,7 +215,7 @@ namespace BLL
 
             if (userInfo.FLevel == 3 || userInfo.FLevel == 4)
             {
-                qu.Where(@" a.FAgencyValue=@FAgencyValue    ", new { FAgencyValue = userInfo.FAgencyValue });
+                qu.Where(@" a.FAgencyValue=@FAgencyValueOp    ", new { FAgencyValueOp = userInfo.FAgencyValue });
             }
 
             #endregion 

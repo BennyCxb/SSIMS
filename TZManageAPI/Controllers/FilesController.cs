@@ -136,8 +136,15 @@ namespace TZManageAPI.Controllers
         [BtLog]
         public Result DeleteFile(int FID)
         {
-            Result result = new Result();
+            Result result = new Result() { code = 1 };
+            loanFilesInfo fileInfo= ModelOpretion.FirstOrDefault<loanFilesInfo>(FID);
 
+            result= FileTools.DeleteFile(fileInfo.FQiNiuKey);
+            if(result.code==1)
+            {
+                fileInfo.Delete().Submit();
+            }
+            
             return result;
         }
 

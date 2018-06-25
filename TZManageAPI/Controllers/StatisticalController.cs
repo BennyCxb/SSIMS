@@ -86,12 +86,21 @@ namespace TZManageAPI.Controllers
         public Result GetOldCityChangeSchDataByAgency(int FYear)
         {
             Result result = new Result() { code = 1 };
-            try
+
+            string formatParam = string.Empty;
+            //县级用户只能看到自己的数据
+            if (UserInfo.FLevel == 3 || UserInfo.FLevel == 4)
+            {
+                formatParam = string.Format(" AND ag.FValue={0} ", UserInfo.FAgencyValue); 
+
+            }
+
+                try
             {
                 var dt = ModelOpretion.SearchDataRetunDataTable(string.Format(@" 
  select * from 
  (
- select ag.FName '县（市区）'
+ select ag.FValue,ag.FName '县（市区）'
                     ,SUM((case when isnull(o.FID,0)<>0 then 1 else 0 end )) '三年改造任务数',
                     sum((case when o.FCityChangeType=1 and Year(o.FChangeBeginDate)=@One then 1 else 0 end )) 'Task{0}Type1',
                     sum((case when o.FCityChangeType=2 and Year(o.FChangeBeginDate)=@One then 1 else 0 end )) 'Task{0}Type2',
@@ -104,12 +113,13 @@ namespace TZManageAPI.Controllers
                     sum((case when o.FCityChangeType=3 and Year(o.FChangeBeginDate)=@Three then 1 else 0 end )) 'Task{2}Type3'
                     ,'0' as FSort
                     from t_Base_Agency ag
-                    left join t_Loan_OldCity o on o.FAgencyValue=ag.FValue and Year(o.FChangeBeginDate)>=@One and Year(o.FChangeBeginDate)<=@Three AND isnull(o.FIsDeleted,0)=0 
+                    left join t_Loan_OldCity o on o.FAgencyValue=ag.FValue and Year(o.FChangeBeginDate)>=@One and Year(o.FChangeBeginDate)<=@Three AND isnull(o.FIsDeleted,0)=0  AND o.FStatus>=1
+                    Where 1=1 {3}
                     group by ag.FValue,ag.FName
                     
 union 
 
-select '合计',SUM((case when isnull(o.FID,0)<>0 then 1 else 0 end )) '三年改造任务数',
+select 999,'合计',SUM((case when isnull(o.FID,0)<>0 then 1 else 0 end )) '三年改造任务数',
                     sum((case when o.FCityChangeType=1 and Year(o.FChangeBeginDate)=@One then 1 else 0 end )) 'Task{0}Type1',
                     sum((case when o.FCityChangeType=2 and Year(o.FChangeBeginDate)=@One then 1 else 0 end )) 'Task{0}Type2',
                     sum((case when o.FCityChangeType=3 and Year(o.FChangeBeginDate)=@One then 1 else 0 end )) 'Task{0}Type3'
@@ -121,10 +131,12 @@ select '合计',SUM((case when isnull(o.FID,0)<>0 then 1 else 0 end )) '三年�
                     sum((case when o.FCityChangeType=3 and Year(o.FChangeBeginDate)=@Three then 1 else 0 end )) 'Task{2}Type3'
                     ,'1' as FSort
 from t_Base_Agency ag
-                    left join t_Loan_OldCity o on o.FAgencyValue=ag.FValue and Year(o.FChangeBeginDate)>=@One and Year(o.FChangeBeginDate)<=@Three AND isnull(o.FIsDeleted,0)=0 
+                    left join t_Loan_OldCity o on o.FAgencyValue=ag.FValue and Year(o.FChangeBeginDate)>=@One and Year(o.FChangeBeginDate)<=@Three AND isnull(o.FIsDeleted,0)=0  AND o.FStatus>=1
+                    Where 1=1 {3}
+                    
   )a
-  order by a.FSort           
-                 ", FYear, FYear + 1, FYear + 2), new { One = FYear, Two = FYear + 1, Three = FYear + 2 });
+  order by a.FSort  asc,a.FValue  asc            
+                 ", FYear, FYear + 1, FYear + 2, formatParam), new { One = FYear, Two = FYear + 1, Three = FYear + 2 });
 
                 result.@object = dt;
             }
@@ -148,6 +160,14 @@ from t_Base_Agency ag
         [BtLog]
         public HttpResponseMessage GetOldCityChangeSchExcelByAgency(int FYear)
         {
+            string formatParam = string.Empty;
+            //县级用户只能看到自己的数据
+            if (UserInfo.FLevel == 3 || UserInfo.FLevel == 4)
+            {
+                formatParam = string.Format(" AND ag.FValue={0} ", UserInfo.FAgencyValue);
+
+            }
+
             var dt = ModelOpretion.SearchDataRetunDataTable(string.Format(@" 
  select [县（市区）] 
 ,[{0}年|整体（或大部分）拆除退出工业用途]
@@ -160,7 +180,7 @@ from t_Base_Agency ag
 ,[{2}年|整体（或大部分）拆除重建用于工业]
 ,[{2}年|综合整治（含部分拆除）用于产业提升或转型] from 
  (
- select ag.FName '县（市区）'
+ select ag.FValue,ag.FName '县（市区）'
                     ,SUM((case when isnull(o.FID,0)<>0 then 1 else 0 end )) '三年改造任务数',
                     sum((case when o.FCityChangeType=1 and Year(o.FChangeBeginDate)=@One then 1 else 0 end )) '{0}年|整体（或大部分）拆除退出工业用途',
                     sum((case when o.FCityChangeType=2 and Year(o.FChangeBeginDate)=@One then 1 else 0 end )) '{0}年|整体（或大部分）拆除重建用于工业',
@@ -173,12 +193,14 @@ from t_Base_Agency ag
                     sum((case when o.FCityChangeType=3 and Year(o.FChangeBeginDate)=@Three then 1 else 0 end )) '{2}年|综合整治（含部分拆除）用于产业提升或转型'
                     ,'0' as FSort
                     from t_Base_Agency ag
-                    left join t_Loan_OldCity o on o.FAgencyValue=ag.FValue and Year(o.FChangeBeginDate)>=@One and Year(o.FChangeBeginDate)<=@Three AND isnull(o.FIsDeleted,0)=0 
+                    left join t_Loan_OldCity o on o.FAgencyValue=ag.FValue and Year(o.FChangeBeginDate)>=@One and Year(o.FChangeBeginDate)<=@Three AND isnull(o.FIsDeleted,0)=0  AND o.FStatus>=1
+                    Where 1=1 {3}
+                    
                     group by ag.FValue,ag.FName
                     
 union 
 
-select '合计',SUM((case when isnull(o.FID,0)<>0 then 1 else 0 end )) '三年改造任务数',
+select 999,'合计',SUM((case when isnull(o.FID,0)<>0 then 1 else 0 end )) '三年改造任务数',
                     sum((case when o.FCityChangeType=1 and Year(o.FChangeBeginDate)=@One then 1 else 0 end )) '{0}年|整体（或大部分）拆除退出工业用途',
                     sum((case when o.FCityChangeType=2 and Year(o.FChangeBeginDate)=@One then 1 else 0 end )) '{0}年|整体（或大部分）拆除重建用于工业',
                     sum((case when o.FCityChangeType=3 and Year(o.FChangeBeginDate)=@One then 1 else 0 end )) '{0}年|综合整治（含部分拆除）用于产业提升或转型'
@@ -189,11 +211,13 @@ select '合计',SUM((case when isnull(o.FID,0)<>0 then 1 else 0 end )) '三年�
                     sum((case when o.FCityChangeType=2 and Year(o.FChangeBeginDate)=@Three then 1 else 0 end )) '{2}年|整体（或大部分）拆除重建用于工业',
                     sum((case when o.FCityChangeType=3 and Year(o.FChangeBeginDate)=@Three then 1 else 0 end )) '{2}年|综合整治（含部分拆除）用于产业提升或转型'
                     ,'1' as FSort
-from t_Base_Agency ag
-                    left join t_Loan_OldCity o on o.FAgencyValue=ag.FValue and Year(o.FChangeBeginDate)>=@One and Year(o.FChangeBeginDate)<=@Three AND isnull(o.FIsDeleted,0)=0 
+                    from t_Base_Agency ag
+                    left join t_Loan_OldCity o on o.FAgencyValue=ag.FValue and Year(o.FChangeBeginDate)>=@One and Year(o.FChangeBeginDate)<=@Three AND isnull(o.FIsDeleted,0)=0  AND o.FStatus>=1
+                    Where 1=1 {3}
+                  
   )a
-  order by a.FSort           
-                 ", FYear, FYear + 1, FYear + 2), new { One = FYear, Two = FYear + 1, Three = FYear + 2 });
+  order by a.FSort   asc,a.FValue  asc           
+                 ", FYear, FYear + 1, FYear + 2, formatParam), new { One = FYear, Two = FYear + 1, Three = FYear + 2 });
             string name = "老旧城区三年改造计划" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xls";//以当前时间为excel表命名   
 
             var response = new HttpResponseMessage(HttpStatusCode.OK);
@@ -231,6 +255,13 @@ from t_Base_Agency ag
         [BtLog]
         public HttpResponseMessage GetOldCityChangeProgressExcelByAgency(int FYear)
         {
+            string formatParam = string.Empty;
+            //县级用户只能看到自己的数据
+            if (UserInfo.FLevel == 3 || UserInfo.FLevel == 4)
+            {
+                formatParam = string.Format(" AND ag.FValue={0} ", UserInfo.FAgencyValue);
+
+            }
             var dt = ModelOpretion.SearchDataRetunDataTable(string.Format(@" 
                  select [县（市区）] 
                 ,[三年改造任务数（个）]
@@ -248,7 +279,7 @@ from t_Base_Agency ag
                 ,[综合整治（含部分拆除）用于产业提升或转型|已拆除/已整治]
                 From 
                 (
-                select ag.FName '县（市区）'
+                select ag.FValue,ag.FName '县（市区）'
                 ,SUM((case when isnull(o.FID,0)<>0 then 1 else 0 end )) '三年改造任务数（个）'
                 ,SUM((case when o.FCityChangeType=1 and o.FChangeStatus=1 then 1 else 0 end ) ) '整体（或大部分）拆除退出工业用途|已启动（个）'
                 ,SUM((case when o.FCityChangeType=1 and o.FChangeStatus=2 then 1 else 0 end ) ) '整体（或大部分）拆除退出工业用途|已签约（个）'
@@ -264,18 +295,19 @@ from t_Base_Agency ag
                 ,sum( case when o.FCityChangeType=3 and  isnull(o3.FFinishedCount,0)=isnull(o3.FTotalCount,0) then 1 else 0 end ) '综合整治（含部分拆除）用于产业提升或转型|已拆除/已整治'
                 ,'0' as FSort
                 from t_Base_Agency ag
-                left join t_Loan_OldCity o on o.FAgencyValue=ag.FValue AND isnull(o.FIsDeleted,0)=0 and Year(o.FChangeBeginDate)>=@One and Year(o.FChangeBeginDate)<=@Three
+                left join t_Loan_OldCity o on o.FAgencyValue=ag.FValue AND isnull(o.FIsDeleted,0)=0 and Year(o.FChangeBeginDate)>=@One and Year(o.FChangeBeginDate)<=@Three AND o.FStatus>=1
                 left join t_Loan_OldCityExtend12 o1 on o1.FLoanID=o.FID and o1.FStatus=3 and o1.FSubmitStatus=1
                 left join 
                 (
                 select FLoanID,sum(case when isnull(FStatus,0)=2 then 1 else 0 end) FFinishedCount ,COUNT(0) FTotalCount from t_Loan_OldCityExtend3
                 group by FLoanID 
                 ) o3 on o3.FLoanID=o.FID 
+                Where 1=1 {0}
                 group by ag.FValue,ag.fname
 
                 union 
 
-                select '合计' '县（市区）'
+                select 999,'合计' '县（市区）'
                 ,SUM((case when isnull(o.FID,0)<>0 then 1 else 0 end )) '三年改造任务数（个）'
                 ,SUM((case when o.FCityChangeType=1 and o.FChangeStatus=1 then 1 else 0 end ) ) '整体（或大部分）拆除退出工业用途|已启动（个）'
                 ,SUM((case when o.FCityChangeType=1 and o.FChangeStatus=2 then 1 else 0 end ) ) '整体（或大部分）拆除退出工业用途|已签约（个）'
@@ -291,17 +323,18 @@ from t_Base_Agency ag
                 ,sum( case when o.FCityChangeType=3 and  isnull(o3.FFinishedCount,0)=isnull(o3.FTotalCount,0) then 1 else 0 end ) '综合整治（含部分拆除）用于产业提升或转型|已拆除/已整治'
                 ,'1' as FSort
                 from t_Base_Agency ag
-                left join t_Loan_OldCity o on o.FAgencyValue=ag.FValue AND isnull(o.FIsDeleted,0)=0  and Year(o.FChangeBeginDate)>=@One and Year(o.FChangeBeginDate)<=@Three
+                left join t_Loan_OldCity o on o.FAgencyValue=ag.FValue AND isnull(o.FIsDeleted,0)=0  and Year(o.FChangeBeginDate)>=@One and Year(o.FChangeBeginDate)<=@Three AND o.FStatus>=1
                 left join t_Loan_OldCityExtend12 o1 on o1.FLoanID=o.FID and o1.FStatus=3 and o1.FSubmitStatus=1
                 left join 
                 (
                 select FLoanID,sum(case when isnull(FStatus,0)=2 then 1 else 0 end) FFinishedCount ,COUNT(0) FTotalCount from t_Loan_OldCityExtend3
                 group by FLoanID 
                 ) o3 on o3.FLoanID=o.FID 
+                Where 1=1 {0}
                 ) a
-                order by a.FSort asc 
+                order by a.FSort asc ,a.FValue asc
           
-                 "), new { One = FYear,  Three = FYear + 2 });
+                 ", formatParam), new { One = FYear,  Three = FYear + 2 });
 
             string name = "全市老旧工业区块改造进度表" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xls";//以当前时间为excel表命名   
 
@@ -339,12 +372,18 @@ from t_Base_Agency ag
         [BtLog]
         public Result GetOldCityChangeProgressDataByAgency(int FYear)
         {
+            string formatParam = string.Empty;
+            //县级用户只能看到自己的数据
+            if (UserInfo.FLevel == 3 || UserInfo.FLevel == 4)
+            {
+                formatParam = string.Format(" AND ag.FValue={0} ", UserInfo.FAgencyValue);
+            }
             Result result = new Result() { code = 1 };
             var dt = ModelOpretion.SearchDataRetunDataTable(string.Format(@" 
                  select *
                 From 
                 (
-                select ag.FName FAgencyName
+                select ag.FValue,ag.FName FAgencyName
                 ,SUM((case when isnull(o.FID,0)<>0 then 1 else 0 end )) TotalCount
                 ,SUM((case when o.FCityChangeType=1 and o.FChangeStatus=1 then 1 else 0 end ) ) Change1Status1
                 ,SUM((case when o.FCityChangeType=1 and o.FChangeStatus=2 then 1 else 0 end ) ) Change1Status2
@@ -360,18 +399,19 @@ from t_Base_Agency ag
                 ,sum( case when o.FCityChangeType=3 and  isnull(o3.FFinishedCount,0)=isnull(o3.FTotalCount,0) then 1 else 0 end ) Change3Status2
                 ,'0' as FSort
                 from t_Base_Agency ag
-                left join t_Loan_OldCity o on o.FAgencyValue=ag.FValue AND isnull(o.FIsDeleted,0)=0 and Year(o.FChangeBeginDate)>=@One and Year(o.FChangeBeginDate)<=@Three
+                left join t_Loan_OldCity o on o.FAgencyValue=ag.FValue AND isnull(o.FIsDeleted,0)=0 and Year(o.FChangeBeginDate)>=@One and Year(o.FChangeBeginDate)<=@Three AND o.FStatus>=1
                 left join t_Loan_OldCityExtend12 o1 on o1.FLoanID=o.FID and o1.FStatus=3 and o1.FSubmitStatus=1
                 left join 
                 (
                 select FLoanID,sum(case when isnull(FStatus,0)=2 then 1 else 0 end) FFinishedCount ,COUNT(0) FTotalCount from t_Loan_OldCityExtend3
                 group by FLoanID 
                 ) o3 on o3.FLoanID=o.FID 
+                Where 1=1 {0}
                 group by ag.FValue,ag.fname
 
                 union 
 
-                select '合计' FAgencyName
+                select 999,'合计' FAgencyName
                 ,SUM((case when isnull(o.FID,0)<>0 then 1 else 0 end )) TotalCount
                 ,SUM((case when o.FCityChangeType=1 and o.FChangeStatus=1 then 1 else 0 end ) ) Change1Status1
                 ,SUM((case when o.FCityChangeType=1 and o.FChangeStatus=2 then 1 else 0 end ) ) Change1Status2
@@ -387,17 +427,19 @@ from t_Base_Agency ag
                 ,sum( case when o.FCityChangeType=3 and  isnull(o3.FFinishedCount,0)=isnull(o3.FTotalCount,0) then 1 else 0 end ) Change3Status2
                 ,'1' as FSort
                 from t_Base_Agency ag
-                left join t_Loan_OldCity o on o.FAgencyValue=ag.FValue AND isnull(o.FIsDeleted,0)=0  and Year(o.FChangeBeginDate)>=@One and Year(o.FChangeBeginDate)<=@Three
+                left join t_Loan_OldCity o on o.FAgencyValue=ag.FValue AND isnull(o.FIsDeleted,0)=0  and Year(o.FChangeBeginDate)>=@One and Year(o.FChangeBeginDate)<=@Three AND o.FStatus>=1
                 left join t_Loan_OldCityExtend12 o1 on o1.FLoanID=o.FID and o1.FStatus=3 and o1.FSubmitStatus=1
                 left join 
                 (
                 select FLoanID,sum(case when isnull(FStatus,0)=2 then 1 else 0 end) FFinishedCount ,COUNT(0) FTotalCount from t_Loan_OldCityExtend3
                 group by FLoanID 
                 ) o3 on o3.FLoanID=o.FID 
+                Where 1=1 {0}
                 ) a
-                order by a.FSort asc 
+                
+                order by a.FSort asc ,a.FValue asc
           
-                 "), new { One = FYear, Three = FYear + 2 });
+                 ",formatParam), new { One = FYear, Three = FYear + 2 });
 
             result.@object = dt;
 
@@ -410,9 +452,16 @@ from t_Base_Agency ag
         /// <returns></returns>
         [HttpGet]
         [BtLog]
-        public Result GetOldCityAllData()
+        public Result GetOldCityAllData(int FYear)
         {
             Result result = new Result() { code = 1 };
+            string formatParam = string.Empty;
+            //县级用户只能看到自己的数据
+            if (UserInfo.FLevel == 3 || UserInfo.FLevel == 4)
+            {
+                formatParam = string.Format(" AND o.FAgencyValue={0} ", UserInfo.FAgencyValue);
+            }
+            
             var dt = ModelOpretion.SearchDataRetunDataTable(string.Format(@" 
                  with enum as 
                 (
@@ -438,7 +487,10 @@ from t_Base_Agency ag
 	                when o.FCityChangeType=3 and o3.FFinishedCount<o3.FTotalCount then '拆除/整治中'
 	                when o.FCityChangeType=3 and o3.FFinishedCount<o3.FTotalCount then '已拆除/整治完成'
 	                else '无'
-	                end ) FProgress
+	                end ) FProgress,
+                (case when o.FDemonstration='1' then '是' 
+					else '否' end 
+                ) FDemonstration
                 from t_Loan_OldCity o
                 left join  enum enc on enc.FName='按台州市办法分类' and enc.FValue=o.FCityChangeType
                 left join  enum ena on ena.FName='改造后用途' and ena.FValue=o.FCityChangeType
@@ -447,10 +499,11 @@ from t_Base_Agency ag
 	                select FLoanID,sum(case when isnull(FStatus,0)=2 then 1 else 0 end) FFinishedCount ,COUNT(0) FTotalCount from t_Loan_OldCityExtend3
 	                group by FLoanID 
                 ) o3 on o3.FLoanID=o.FID 
+                where o.FStatus>=1 AND YEAR(FChangeBeginDate)>=@FYear  AND YEAR(FChangeBeginDate)<=@Three  {0}
 
 
           
-                 "), new { });
+                 ", formatParam), new { FYear= FYear, Three=FYear+2 });
 
             result.@object = dt;
 
@@ -464,8 +517,14 @@ from t_Base_Agency ag
         /// <returns></returns>
         [HttpGet]
         [BtLog]
-        public HttpResponseMessage GetOldCityAllExcel()
+        public HttpResponseMessage GetOldCityAllExcel(int FYear)
         {
+            string formatParam = string.Empty;
+            //县级用户只能看到自己的数据
+            if (UserInfo.FLevel == 3 || UserInfo.FLevel == 4)
+            {
+                formatParam = string.Format(" AND o.FAgencyValue={0} ", UserInfo.FAgencyValue);
+            }
             var dt = ModelOpretion.SearchDataRetunDataTable(string.Format(@" 
                         with enum as 
                         (
@@ -494,6 +553,9 @@ from t_Base_Agency ag
 	                        when o.FCityChangeType=3 and o3.FFinishedCount<o3.FTotalCount then '已拆除/整治完成'
 	                        else '无'
 	                        end ) '目前进度'
+                        ,(case when o.FDemonstration='1' then '是' 
+					            else '否' end 
+                         ) [是否示范项目]
                         from t_Loan_OldCity o
                         left join  enum enc on enc.FName='按台州市办法分类' and enc.FValue=o.FCityChangeType
                         left join  enum ena on ena.FName='改造后用途' and ena.FValue=o.FCityChangeType
@@ -502,8 +564,8 @@ from t_Base_Agency ag
 	                        select FLoanID,sum(case when isnull(FStatus,0)=2 then 1 else 0 end) FFinishedCount ,COUNT(0) FTotalCount from t_Loan_OldCityExtend3
 	                        group by FLoanID 
                         ) o3 on o3.FLoanID=o.FID 
-
-                 "), new { });
+                        where o.FStatus>=1 AND YEAR(FChangeBeginDate)>=@FYear AND YEAR(FChangeBeginDate)<=@Three  {0}
+                 ", formatParam), new { FYear = FYear, Three = FYear + 2 });
 
             string name = "全市老旧工业区块汇总表" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xls";//以当前时间为excel表命名   
 

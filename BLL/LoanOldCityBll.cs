@@ -38,6 +38,7 @@ namespace BLL
             string FAreaName = dy.FAreaName;
             string FYear = dy.FYear;
             string FMonth = dy.FMonth;
+            string FDemonstration = dy.FDemonstration;
 
             string FBillTypeID = dy.FBillTypeID;
             string strSortFiled = dy.SortFiled;
@@ -51,7 +52,10 @@ namespace BLL
                 ,o.FTownName,O.FAreaName
                 ,CONVERT(nvarchar(32), o.FChangeBeginDate,23) FChangeBeginDate,convert(nvarchar(32), o.FChangeEndDate,23) FChangeEndDate
                 ,ect.FName FCityChangeType,O.FTownChangeType,
-                eaf.FName FAfterChange
+                eaf.FName FAfterChange,
+                (case when o.FDemonstration='1' then '是' 
+					else '否' end 
+                ) FDemonstration
                 from t_loan_OldCity o
                 left join 
                 ( select et.FName AS FETName,ev.FValue,ev.FName 
@@ -133,6 +137,11 @@ namespace BLL
             {
                 qu.Where(" MONTH(o.FChangeBeginDate)=@FMonth ", new { FMonth = FMonth });
             }
+            //是否示范项目
+            if(!string.IsNullOrWhiteSpace(FDemonstration))
+            {
+                qu.Where(" o.FDemonstration=@FDemonstration ", new { FDemonstration = FDemonstration });
+            }
 
 
             #endregion
@@ -142,7 +151,7 @@ namespace BLL
             //市级只看上报完成的
             if(userInfo.FLevel==2)
             {
-                qu.Where(" o.FStatus=@FStatusOp ", new { FStatusOp = 2 });
+                qu.Where(" o.FStatus>=1 ", new {});
             }
 
             if (userInfo.FLevel == 3 || userInfo.FLevel == 4)

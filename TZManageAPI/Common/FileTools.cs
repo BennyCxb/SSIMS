@@ -59,10 +59,26 @@ namespace TZManageAPI.Common
             
         }
 
-
+        /// <summary>
+        /// 获取私有文件地址
+        /// </summary>
+        /// <param name="fileKey"></param>
+        /// <returns></returns>
         public static Result GetPrivateUrl(string fileKey)
         {
             Result result= UploadFiles.GetQiNiuPrivateUrl(fileKey);
+
+            return result;
+        }
+
+        /// <summary>
+        /// 删除文件
+        /// </summary>
+        /// <param name="fileKey"></param>
+        /// <returns></returns>
+        public static Result DeleteFile(string fileKey)
+        {
+            Result result = UploadFiles.DeleteFile(fileKey);
 
             return result;
         }

@@ -163,7 +163,7 @@ namespace TZManageAPI.Controllers
                     apply.FBillNo = info.FBillNo;
 
 
-                    int k = apply.SaveOnSubmit();
+                    int k = apply.Update().Submit(); 
                     if (k > 0)
                     {
                         result.code = 1;

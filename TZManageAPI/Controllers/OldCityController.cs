@@ -639,6 +639,37 @@ namespace TZManageAPI.Controllers
             return result;
         }
 
-        
+        /// <summary>
+        /// 老旧城区批量退回
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [BtLog]
+        public Result ReturnOldCity(JObject obj)
+        {
+            Result result = new Result() { code = 1 };
+            try
+            {
+                LogService.Default.Debug(obj);
+                List<int> ApplyIds = obj["ApplyIds"].ToObject<List<int>>();
+                foreach (int id in ApplyIds)
+                {
+                    LoanOldCityInfo oldCity= ModelOpretion.FirstOrDefault<LoanOldCityInfo>(id);
+                    oldCity.FStatus = 0;
+                    oldCity.Update(p => new object[] {
+                        p.FStatus
+                    }).Submit();
+                }
+            }
+            catch(Exception ex)
+            {
+                LogService.Default.Fatal("老旧城区批量退回出错 " + ex.Message);
+                result.code = 0;
+                result.message = "老旧工业区块批量退回出错";
+            }
+
+            return result;
+        }
+
     }
 }

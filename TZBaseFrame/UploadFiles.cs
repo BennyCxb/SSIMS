@@ -203,5 +203,39 @@ namespace TZBaseFrame
             return result;
         }
 
+        /// <summary>
+        /// 删除文件
+        /// </summary>
+        /// <param name="fileKey"></param>
+        /// <returns></returns>
+        public static Result DeleteFile(string fileKey)
+        {
+            Result result = new Result() { code=1};
+            try
+            {
+                // 设置存储区域
+                Config config = new Config();
+                config.Zone = Zone.ZONE_CN_South;
+                Mac mac = new Mac(AccessKey, SecretKey);
+                BucketManager bucketManager = new BucketManager(mac, config);
+
+                HttpResult deleteRet = bucketManager.Delete(Bucket, fileKey);
+
+                if (deleteRet.Code != (int)HttpCode.OK)
+                {
+                    result.code = 0;
+                    result.message = "删除失败";
+                }
+
+            }
+            catch(Exception ex)
+            {
+                LogService.Default.Fatal("删除七牛文件失败："+ex.Message);
+                result.code = 0;
+                result.message = "删除七牛文件失败";
+            }
+
+            return result;
+        }
     }
 }
