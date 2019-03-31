@@ -55,7 +55,17 @@ namespace BLL
                 eaf.FName FAfterChange,
                 (case when o.FDemonstration='1' then '是' 
 					else '否' end 
-                ) FDemonstration
+                ) FDemonstration,
+                 (case when (o.FCityChangeType=1 or o.FCityChangeType=2) and o.FChangeStatus=1 then '已启动' 
+	                when (o.FCityChangeType=1 or o.FCityChangeType=2) and o.FChangeStatus=2 then '已签约' 
+	                when (o.FCityChangeType=1 or o.FCityChangeType=2) and o.FChangeStatus=3 then '已拆除'
+	                when (o.FCityChangeType=1 or o.FCityChangeType=2) and o.FChangeStatus=4 then '已开工'
+	                when (o.FCityChangeType=1 or o.FCityChangeType=2) and o.FChangeStatus=5 then '已完工'
+                    when o.FCityChangeType=3 and   isnull(o3.FTotalCount,0)=0   then '无'
+	                when o.FCityChangeType=3 and   isnull(o3.FFinishedCount,0)<isnull(o3.FTotalCount,0)  then '拆除/整治中'
+	                when o.FCityChangeType=3 and o3.FFinishedCount=o3.FTotalCount and o3.FTotalCount>0 then '已拆除/整治完成'
+	                else '无'
+	                end ) FProgress
                 from t_loan_OldCity o
                 left join 
                 ( select et.FName AS FETName,ev.FValue,ev.FName 
@@ -72,6 +82,12 @@ namespace BLL
 			                from t_Base_EnumType et 
 			                left join t_Base_EnumValue ev on ev.FEnumTypeID=et.FID 
                 ) es on es.FValue=o.FStatus and es.FETName='审核状态'
+                left join 
+                (
+	                select FLoanID,sum(case when isnull(FStatus,0)=2 then 1 else 0 end) FFinishedCount ,COUNT(0) FTotalCount from t_Loan_OldCityExtend3
+                    where ISNULL(FIsDeleted,0)=0
+	                group by FLoanID 
+                ) o3 on o3.FLoanID=o.FID
 
 ";
 

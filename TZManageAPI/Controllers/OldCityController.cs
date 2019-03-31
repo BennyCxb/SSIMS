@@ -148,14 +148,37 @@ namespace TZManageAPI.Controllers
                     oldCity.FChangeEndDate = info.FChangeEndDate;
                     oldCity.FChangeRemark = info.FChangeRemark;
                     oldCity.FDemonstration = info.FDemonstration;
+                    oldCity.FChangeYear = info.FChangeYear;
 
 
                     oldCity.FModifyTime = DateTime.Now;
                     oldCity.FModifyUserID = UserInfo.UserId;
                     
-
-
                     int k = oldCity.Update().Submit();
+                    
+                    //改造方式1或2的新增5条改造进度
+                    if (oldCity.FCityChangeType == 1 || oldCity.FCityChangeType == 2)
+                    {
+                        //判断是否已存在改造进度，不存在则新增
+                        bool haveExtend = ModelOpretion.ScalarDataExist(@" select * from t_Loan_OldCityExtend12 
+                                    where FLoanID = @FLoanID ", new { FLoanID = oldCity.FID });
+                        if(!haveExtend)
+                        {
+                            for (int i = 1; i <= 5; i++)
+                            {
+                                LoanOldCityExtend12Info extendInfo = new LoanOldCityExtend12Info()
+                                {
+                                    FAddTime = DateTime.Now,
+                                    FAddUserID = UserInfo.UserId,
+                                    FBillTypeID = 2000011,
+                                    FLoanID = oldCity.FID,
+                                    FStatus = i
+                                };
+                                extendInfo.SaveOnSubmit();
+                            }
+                        }
+                    }
+
                     if (k > 0)
                     {
                         result.code = 1;
@@ -192,6 +215,7 @@ namespace TZManageAPI.Controllers
                     oldCity.FChangeEndDate = info.FChangeEndDate;
                     oldCity.FChangeRemark = info.FChangeRemark;
                     oldCity.FDemonstration = info.FDemonstration;
+                    oldCity.FChangeYear = info.FChangeYear;
 
                     oldCity.FBillTypeID = info.FBillTypeID;
                     oldCity.FIsDeleted = 0;
@@ -223,6 +247,8 @@ namespace TZManageAPI.Controllers
                         result.message = "添加成功！";
                     }
                 }
+
+
             }
             catch (Exception ex)
             {
@@ -318,7 +344,7 @@ namespace TZManageAPI.Controllers
             
             try
             {
-                List<LoanOldCityExtend12Info> list = ModelOpretion.ModelList<LoanOldCityExtend12Info>(p => p.FLoanID == FLoanID);
+                List<LoanOldCityExtend12Info> list = ModelOpretion.ModelList<LoanOldCityExtend12Info>(p => p.FLoanID == FLoanID).OrderBy(p=>p.FStatus).ToList();
                 
                 IList<OldCityExtend12DTOShow> listDTO = Mapper.Map<List<LoanOldCityExtend12Info>, List<OldCityExtend12DTOShow>>(list);
 
@@ -364,17 +390,21 @@ namespace TZManageAPI.Controllers
                     else
                     {
                         info.FSubmitStatus = 1;
+                        info.FModifyTime = DateTime.Now;
                         info.Update(p => new object[]
                         {
-                            p.FSubmitStatus
+                            p.FSubmitStatus,
+                            p.FModifyTime
                         }).Submit();
 
                         //修改主表改造进度
                         LoanOldCityInfo oldInfo = ModelOpretion.FirstOrDefault<LoanOldCityInfo>(info.FLoanID);
                         oldInfo.FChangeStatus = info.FStatus;
+                        oldInfo.FChangeStatusTimeNow = DateTime.Now;
                         oldInfo.Update(p => new object[]
                         {
-                            p.FChangeStatus
+                            p.FChangeStatus,
+                            p.FChangeStatusTimeNow
                         }).Submit();
                     }
                 }
@@ -656,9 +686,29 @@ namespace TZManageAPI.Controllers
                 {
                     LoanOldCityInfo oldCity= ModelOpretion.FirstOrDefault<LoanOldCityInfo>(id);
                     oldCity.FStatus = 0;
+                    oldCity.FChangeStatus = 0;
                     oldCity.Update(p => new object[] {
-                        p.FStatus
+                        p.FStatus,
+                        p.FChangeStatus
                     }).Submit();
+
+                    IList<LoanOldCityExtend12Info> extend12List= ModelOpretion.ModelList<LoanOldCityExtend12Info>(p=>p.FLoanID==oldCity.FID);
+                    foreach(LoanOldCityExtend12Info extend12 in extend12List)
+                    {
+                        extend12.FSubmitStatus = 0;
+                        extend12.Update(p => new object[] {
+                            p.FSubmitStatus
+                        }).Submit();
+                    }
+
+                    IList<LoanOldCityExtend3Info> extend3List = ModelOpretion.ModelList<LoanOldCityExtend3Info>(p => p.FLoanID == oldCity.FID);
+                    foreach(LoanOldCityExtend3Info extend3 in extend3List)
+                    {
+                        extend3.FStatus = 0;
+                        extend3.Update(p => new object[] {
+                            p.FStatus
+                        }).Submit();
+                    }
                 }
             }
             catch(Exception ex)

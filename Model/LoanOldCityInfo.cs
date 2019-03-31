@@ -212,5 +212,15 @@ namespace BT.Manage.Model
         /// </summary>
         [Display(Name = @"十大老旧工业区块改造示范点")]
         public string FDemonstration { get; set; }
+
+        /// <summary>
+        /// 年份（用于统计筛选）
+        /// </summary>
+        [Display(Name = @"年份（用于统计筛选）")]
+        public int? FChangeYear { get; set; }
+
+        [Display(Name =@"最新状态时间")]
+        public DateTime? FChangeStatusTimeNow { get; set; }
+
     }
 }

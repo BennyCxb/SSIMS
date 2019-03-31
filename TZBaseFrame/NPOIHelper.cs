@@ -129,5 +129,33 @@ namespace TZBaseFrame
         }
 
 
+
+        public static Stream ExportExcel(DataTable dt, HSSFWorkbook wk , ISheet sheet, int indexRow)
+        {
+            //填充内容
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                IRow contentRow = sheet.CreateRow(indexRow);
+
+                DataRow dr = dt.Rows[i];
+                for (int j = 0; j < dt.Columns.Count; j++)
+                {
+                    ICell newCell = contentRow.CreateCell(j);
+                    DataColumn column = dt.Columns[j];
+                    string drValue = dr[column].ToString();
+                    newCell.SetCellValue(drValue);
+
+                }
+
+                indexRow++;
+            }
+
+            
+            Stream str = new MemoryStream();
+            wk.Write(str);
+            return str;
+        }
+
+
     }
 }

@@ -39,7 +39,7 @@ namespace BLL
 
             #region sql
             string sql = @"select a.FID,a.FYear,a.FMonth,a.FBillNo,FAgencyName,a.FLineName,a.FMileage,ep.FName as FProbType,es.FName as FStatusName,a.FStatus 
-            ,ec.FName as FChangeStatusName
+            ,ec.FName as FChangeStatusName,a.FCheckLevel
             from t_Loan_Apply a 
             left join (select ev.FValue,ev.FName,et.FName as FTypeName from t_Base_EnumValue ev 
 					            left join t_Base_EnumType et on et.FID=ev.FEnumTypeID ) es on es.FTypeName='审核状态' and es.FValue=a.FStatus
